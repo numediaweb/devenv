@@ -1,0 +1,23 @@
+---
+- name: Install package
+  apt:
+    name: ssh
+    state: present
+  become: yes
+
+- name: Copy key file(s)
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest | default(item.src | basename) }}"
+    owner: "{{ item.owner | default('vagrant') }}"
+    group: "{{ item.group | default(item.owner) | default('vagrant') }}"
+    mode: "{{ item.mode | default('0600') }}"
+    validate: 'echo %s'
+  with_items: "{{ params['ssh_tunnel'].keys_map }}"
+  become: yes
+  become_user: vagrant
+
+- name: Run SSH tunnel on background
+  command: ssh -f "{{ params['ssh_tunnel'].user }}"@"{{ params['ssh_tunnel'].host }}" -p "{{ params['ssh_tunnel'].port }}" -L "{{ params['ssh_tunnel'].forward }}" -N -i "{{ item.dest | default(item.src | basename) }}"
+  with_items: "{{ params['ssh_tunnel'].keys_map }}"
+  become: yes

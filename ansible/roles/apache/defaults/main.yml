@@ -1,0 +1,26 @@
+---
+apache_user: vagrant
+apache_group: vagrant
+
+#apache_packages:
+#  - apache2
+#  - apache2-utils
+
+## Apache package state; use `present` to make sure it's installed, or `latest`
+## if you want to upgrade or switch versions using a new repo.
+#apache_packages_state: absent
+
+
+## Pecl task
+php_pecl_package: php-pear
+php_pecl_install_pecl: true
+php_pecl_install_command: "pecl install"
+php_pecl_extensions:
+ - xdebug
+ - gnupg
+
+## Pear task
+php_pear_channels:
+  - pear.phing.info
+php_pear_libraries:
+  - PHP_CodeSniffer

@@ -1,0 +1,52 @@
+<VirtualHost *:80>
+    ServerName {{ item.item.host }}
+
+{% if item.item.directory is defined %}
+    DocumentRoot {{ item.item.directory }}
+{% else %}
+    DocumentRoot /var/www/{{ item.item.projectFolder}}/public
+{% endif %}
+
+    <Location /assets>
+      ProxyPass !
+    </Location>
+    <Location /system>
+      ProxyPass !
+    </Location>
+
+    ProxyPass / http://127.0.0.1:{{ item.item.port }}/
+    ProxyPassReverse / http://127.0.0.1:{{ item.item.port }}/
+
+    ErrorLog ${APACHE_LOG_DIR}/{{ item.item.host }}_error.log
+    CustomLog ${APACHE_LOG_DIR}/{{ item.item.host }}_access.log combined
+</VirtualHost>
+
+{# Set up SSL VirtualHosts #}
+{% if item.item.ssl | default(true) %}
+<VirtualHost *:443>
+    ServerName {{ item.item.host }}
+
+    SSLEngine on
+    SSLCertificateFile /etc/apache2/ssl/{{ item.item.host }}.crt
+    SSLCertificateKeyFile /etc/apache2/ssl/{{ item.item.host }}.key
+
+{% if item.item.directory is defined %}
+    DocumentRoot {{ item.item.directory }}
+{% else %}
+    DocumentRoot /var/www/{{ item.item.projectFolder}}/public
+{% endif %}
+
+    <Location /assets>
+      ProxyPass !
+    </Location>
+    <Location /system>
+      ProxyPass !
+    </Location>
+
+    ProxyPass / http://127.0.0.1:{{ item.item.port }}/
+    ProxyPassReverse / http://127.0.0.1:{{ item.item.port }}/
+
+    ErrorLog ${APACHE_LOG_DIR}/{{ item.item.host }}_error.log
+    CustomLog ${APACHE_LOG_DIR}/{{ item.item.host }}_access.log combined
+</VirtualHost>
+{% endif %}

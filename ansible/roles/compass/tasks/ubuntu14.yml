@@ -1,0 +1,25 @@
+---
+- name: Latest version of Ruby is installed
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - ruby2.0
+    - ruby2.0-dev
+  become: yes
+  become_user: root
+
+- name: Symlink exists for Ruby 2.0
+  file: src=/usr/bin/ruby2.0 dest=/usr/bin/ruby state=link force=true
+  become: yes
+  become_user: root
+
+- name: Symlink exists for Ruby Gems 2.0
+  file: src=/usr/bin/gem2.0 dest=/usr/bin/gem state=link force=true
+  become: yes
+  become_user: root
+
+- name: Compass => Install compass over ruby gems
+  become: yes
+  become_user: root
+  command: gem install compass
+  args:
+    creates: /usr/bin/compass

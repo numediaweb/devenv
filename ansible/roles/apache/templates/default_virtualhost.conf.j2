@@ -1,0 +1,45 @@
+<VirtualHost *:80>
+    ServerName {{ item.item.host }}
+
+{% if item.item.directory is defined %}
+    DocumentRoot {{ item.item.directory }}
+    <Directory {{ item.item.directory }}>
+{% else %}
+    DocumentRoot /var/www/{{ item.item.projectFolder}}
+    <Directory /var/www/{{ item.item.projectFolder}}>
+{% endif %}
+        Options Indexes FollowSymLinks MultiViews
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/{{ item.item.host }}_error.log
+    CustomLog ${APACHE_LOG_DIR}/{{ item.item.host }}_access.log combined
+</VirtualHost>
+
+
+{# Set up SSL VirtualHosts #}
+{% if item.item.ssl | default(true) %}
+<VirtualHost *:443>
+    ServerName {{ item.item.host }}
+
+    SSLEngine on
+    SSLCertificateFile /etc/apache2/ssl/{{ item.item.host }}.crt
+    SSLCertificateKeyFile /etc/apache2/ssl/{{ item.item.host }}.key
+
+{% if item.item.directory is defined %}
+    DocumentRoot {{ item.item.directory }}
+    <Directory {{ item.item.directory }}>
+{% else %}
+    DocumentRoot /var/www/{{ item.item.projectFolder}}
+    <Directory /var/www/{{ item.item.projectFolder}}>
+{% endif %}
+        Options Indexes FollowSymLinks MultiViews
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/{{ item.item.host }}_error.log
+    CustomLog ${APACHE_LOG_DIR}/{{ item.item.host }}_access.log combined
+</VirtualHost>
+{% endif %}

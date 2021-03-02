@@ -1,0 +1,51 @@
+---
+- name: Ensure erlang is installed.
+  package:
+    name: erlang
+    state: present
+  become: yes
+
+- name: Add an apt key by id
+  apt_key:
+    keyserver: keys.openpgp.org
+    id: '0x0A9AF2115F4687BD29803A206B73A36E6026DFCA'
+  become: yes
+
+- name: Download RabbitMQ package.
+  get_url:
+    url: "{{ rabbitmq_deb_url }}"
+    dest: "/tmp/{{ rabbitmq_deb }}"
+
+- name: Ensure RabbitMQ is installed.
+  apt:
+    deb: "/tmp/{{ rabbitmq_deb }}"
+    state: present
+  become: yes
+
+- name: Enable rabbitmq plugins
+  rabbitmq_plugin: names=rabbitmq_management,rabbitmq_tracing,rabbitmq_federation state=enabled
+  notify:
+  - restart rabbitmq
+  become: yes
+
+- name: Add users
+  rabbitmq_user:
+    user: "{{ params['rabbitmq'].user }}"
+    password: "{{ params['rabbitmq'].password }}"
+    tags: administrator,"{{ params['rabbitmq'].user }}"
+    vhost: /
+    configure_priv: .*
+    write_priv: .*
+    read_priv: .*
+    state: present
+  become: yes
+
+- name: Ensure vhost /test is present
+  rabbitmq_vhost: name=/test state=present
+  become: yes
+
+- name: Ensure rabbitmq is started and enabled (if configured).
+  service:
+    name: "{{ rabbitmq_daemon }}"
+    state: "{{ rabbitmq_state }}"
+    enabled: "{{ rabbitmq_enabled }}"

@@ -1,0 +1,41 @@
+---
+varnish_package_name: "{{ params['varnish'].package_name }}"
+varnish_version: "{{ params['varnish'].version }}"
+
+varnish_use_default_vcl: "{{ params['varnish'].use_default_vcl }}"
+varnish_default_vcl_template_path: default.vcl.j2
+
+varnish_default_backend_host: "{{ params['varnish'].default_backend_host }}"
+varnish_default_backend_port: "{{ params['varnish'].default_backend_port }}"
+
+varnish_listen_port: "{{ params['varnish'].listen_port }}"
+varnish_secret: "{{ params['varnish'].secret }}"
+varnish_config_path: "{{ params['varnish'].config_path }}"
+varnish_limit_nofile: "{{ params['varnish'].limit_nofile }}"
+
+varnish_admin_listen_host: "{{ params['varnish'].admin_listen_host }}"
+varnish_admin_listen_port: "{{ params['varnish'].admin_listen_port }}"
+
+varnish_storage: "{{ params['varnish'].storage }}"
+varnish_pidfile: "{{ params['varnish'].pidfile }}"
+
+varnishd_extra_options: "{{ params['varnish'].varnishd_extra_options }}"
+
+varnish_enabled_services: "{{ params['varnish'].enabled_services }}"
+
+# Optionally define additional backends.
+varnish_backends: "{{ params['varnish'].backends }}"
+#   apache:
+#     host: 10.0.2.2
+#     port: 80
+#   nodejs:
+#     host: 10.0.2.3
+#     port: 80
+
+# Optionally define vhosts pointed at different backends.
+varnish_vhosts: "{{ params['varnish'].vhosts }}"
+#   example.com:
+#     backend: apache
+#   nodejs.example.com:
+#     backend: nodejs
+apache2_port: "{{ params['varnish'].apache2_port }}"

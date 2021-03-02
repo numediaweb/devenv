@@ -1,0 +1,14 @@
+---
+- name: Install bundle gem for available ruby version
+  shell: "RUBY_VERSION={{ item.version }} rbenv sudo gem install bundler --no-ri --no-rdoc"
+  args:
+    executable: /bin/bash
+  become_user: vagrant
+  with_items: "{{ params['rubies'] }}"
+
+- name: Install rails specific packages
+  apt: pkg={{ item }} state=latest
+  become: yes
+  with_items:
+    - libpq-dev
+    - nodejs

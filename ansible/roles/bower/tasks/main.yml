@@ -1,0 +1,4 @@
+---
+- name: Bower => Install dependencies
+  npm: name=bower global=yes
+  become: yes

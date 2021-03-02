@@ -1,0 +1,109 @@
+# available versions: 5.6, 7.1, 7.2, 7.4
+php_version: 7.4
+vm_ip: 192.168.33.12
+vm_cpus: 4
+vm_memory: 4096
+vm_disksize: '10GB'
+roles:
+  - common
+  - zsh
+  - apache
+  - mysql
+  - composer
+  - bashrc_alias
+  - nodejs
+  - grunt
+  - bower
+  - compass
+  - gulp
+  - angular_cli
+  - rbenv
+  - rails
+  - redis
+  - upstart
+  - rabbitmq
+  - blackfire
+  - mailcatcher
+  - ssh_tunnel
+  - beanstalkd
+  - maven
+  - varnish
+  - yarn
+  - sftp
+
+# vhosts:
+#  - { projectFolder: "my-project-folder", host: "my-project.dev", framework: "symfony", alias: "pro" }
+
+blackfire:
+    server_id: 438c6b48-399f-493d-8885-2a38dc11de73
+    server_token: 7518bc8c2f0fdd6c6ba1735e2606a5c4694f9db8b776de868a659a89f21ec233
+
+rubies:
+  - version: 2.3.0
+
+rabbitmq:
+    user: test
+    password: test
+
+beanstalkd:
+    beanstalkd_version: "1.10"
+    beanstalkd_listen_addr: "127.0.0.1"
+    beanstalkd_listen_port: "11300"
+    beanstalkd_user: "beanstalkd"
+    beanstalkd_enabled: "yes"
+    beanstalkd_persistent: Yes
+    beanstalkd_storage: "/var/lib/beanstalkd"
+
+# Set the version of Node.js to install ("0.10", "0.12", "4.x", "5.x", "6.x").
+# Version numbers from Nodesource: https://github.com/nodesource/distributions
+nodejs:
+    version: "8.x"
+
+# Additional parameters for the shared folder to be appended to: config.vm.synced_folder. ex. "fsnotify: fsnotify"
+synced_folder_append_params:
+    :someVar: false
+    #:fsnotify: true
+
+ssl:
+    pass_phrase: "vagrant"
+    folder: "/etc/apache2/ssl"
+    country_name: "DE"
+    state: "Berlin"
+    locality: "Berlin"
+    organization: "Numediaweb"
+
+varnish:
+    package_name: "varnish"
+    version: "6.0"
+    use_default_vcl: true
+    default_backend_host: "127.0.0.1"
+    default_backend_port: "8080"
+    listen_port: "80"
+    secret: "14bac2e6-1e34-4770-8078-974373b76c90"
+    config_path: /etc/varnish
+    limit_nofile: 131072
+    admin_listen_host: "127.0.0.1"
+    admin_listen_port: "6082"
+    storage: "file,/var/lib/varnish/varnish_storage.bin,256M"
+    pidfile: /run/varnishd.pid
+    varnishd_extra_options: ""
+    enabled_services:
+        - varnish
+    backends: {}
+    vhosts: {}
+    apache2_port: 8080
+    # Optionally define additional backends.
+    # backends:
+    #   apache:
+    #     host: 10.0.2.2
+    #     port: 80
+    #   nodejs:
+    #     host: 10.0.2.3
+    #     port: 80
+
+    # Optionally define vhosts pointed at different backends.
+    # vhosts:
+    #   example.com:
+    #     backend: apache
+    #   nodejs.example.com:
+    #     backend: nodejs

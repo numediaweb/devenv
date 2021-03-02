@@ -1,0 +1,54 @@
+---
+- name: Create upstart scripts for gulp related projects
+  include_role:
+    name: colstrom.upstart
+  vars:
+    upstart_name: "{{ project.projectFolder }}"
+    upstart_runtime_root: "{{ project.directory }}"
+    upstart_pre_start:
+      - "cd {{ project.directory }}"
+      - "npm install"
+    upstart_script:
+      - "touch /var/run/{{ project.projectFolder }}.pid"
+      - "echo $$ | sudo tee /var/run/{{ project.projectFolder }}.pid"
+      - "cd {{ project.directory }}"
+      - "exec gulp"
+    upstart_pidfile_path: "/var/run/{{ project.projectFolder }}.pid"
+    # TODO: Setting these users causing the service not to start
+    # with the error setting directory ownership. Defautl user is root which which its working fine
+    # upstart_user: vagrant
+    # upstart_group: vagrant
+    upstart_start_on:
+      - startup
+    upstart_stop_on:
+      - shutdown
+  with_items: "{{ params['vhosts'] }}"
+  when: project.framework == "gulp"
+  loop_control:
+    loop_var: project
+
+- name: Create upstart scripts for rails based projects
+  include_role:
+    name: colstrom.upstart
+  vars:
+    upstart_name: "{{ project.projectFolder }}"
+    upstart_runtime_root: "{{ project.directory }}"
+    upstart_pre_start:
+      # TODO: Need to clean this ugly format
+      - "su - vagrant -c 'cd {{ project.directory }} && RUBY_VERSION={{ project.ruby }} /usr/local/rbenv/bin/rbenv exec bundle install'"
+    upstart_script:
+      # TODO: Need to clean this ugly format
+      - "su - vagrant -c 'cd {{ project.directory }} && RUBY_VERSION={{ project.ruby }} /usr/local/rbenv/bin/rbenv exec bundle exec rails server -p {{ project.port }}'"
+    upstart_pidfile_path: "{{ project.directory }}/tmp/pids/server.pid"
+    # TODO: Setting these users causing the service not to start
+    # with the error setting directory ownership. Defautl user is root which which its working fine
+    #upstart_user: vagrant
+    #upstart_group: vagrant
+    upstart_start_on:
+      - startup
+    upstart_stop_on:
+      - shutdown:q
+  with_items: "{{ params['vhosts'] }}"
+  when: project.framework == "rails"
+  loop_control:
+    loop_var: project

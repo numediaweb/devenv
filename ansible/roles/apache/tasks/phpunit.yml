@@ -1,0 +1,7 @@
+- name: Download PHPUnit
+  get_url:
+    url: https://phar.phpunit.de/phpunit.phar
+    dest: /usr/local/bin/phpunit
+    mode: +x
+    validate_certs: false
+  become: yes

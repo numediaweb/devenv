@@ -1,0 +1,4 @@
+#
+- include: tasks/php/php5.6/tasks/php.yml
+- include: tasks/php/php5.6/tasks/options.yml
+- include: tasks/php/php5.6/tasks/xdebug.yml

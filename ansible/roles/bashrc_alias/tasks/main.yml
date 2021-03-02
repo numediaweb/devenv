@@ -1,0 +1,14 @@
+---
+- name: Alias bin/console
+  lineinfile: dest=~/.bashrc line='alias c="bin/console"'
+- name: Alias bin/console
+  lineinfile: dest=~/.zshrc create=yes line='alias c="bin/console"'
+
+- name: Alias cd {{ item.alias }} in Bach
+  lineinfile: dest=~/.bashrc line='alias cd-{{ item.alias }}="cd /var/www/{{ item.projectFolder }}"'
+  with_items: "{{params['vhosts']}}"
+  when: item.alias is defined
+- name: Alias cd {{ item.alias }} in Zash
+  lineinfile: dest=~/.zshrc line='alias cd-{{ item.alias }}="cd /var/www/{{ item.projectFolder }}"'
+  with_items: "{{params['vhosts']}}"
+  when: item.alias is defined

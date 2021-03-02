@@ -1,0 +1,26 @@
+---
+- name: include env vars
+  include_vars: "{{ rbenv.env }}.yml"
+
+- include_tasks: apt_build_depends.yml
+  when: ansible_pkg_mgr == 'apt'
+- include_tasks: yum_build_depends.yml
+  when: ansible_pkg_mgr == 'yum'
+- include_tasks: dnf_build_depends.yml
+  when: ansible_pkg_mgr == 'dnf'
+# - include: pacman_build_depends.yml # Arch Linux
+#   when: ansible_pkg_mgr == 'pacman'
+- include_tasks: homebrew_build_depends.yml
+  when: ansible_os_family == 'Darwin'
+
+- name: set rbenv_owner
+  set_fact: 'rbenv_owner={{ rbenv_owner | default("root", true) }}'
+
+- name: set tmp directory path
+  set_fact: rbenv_tmpdir="{{ ansible_env.TMPDIR | default('/tmp') }}"
+  when: rbenv_tmpdir is undefined
+
+- include_tasks: system_install.yml
+  when: rbenv.env == "system"
+- include_tasks: user_install.yml
+  when: rbenv.env != "system"

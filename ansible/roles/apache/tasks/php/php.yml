@@ -1,0 +1,81 @@
+---
+- name: Add PHP PPA
+  apt_repository: repo='ppa:ondrej/php'
+  become: yes
+
+- name: Creates default Apache html directory
+  file: path=/var/www/html state=directory
+
+- include_tasks: tasks/php/php5.6.yml
+  when: params['php_version'] == 5.6
+
+- include_tasks: tasks/php/php7.1.yml
+  when: params['php_version'] == 7.1
+
+- include_tasks: tasks/php/php7.2.yml
+  when: params['php_version'] == 7.2
+
+- include_tasks: tasks/php/php7.4.yml
+  when: params['php_version'] == 7.4
+
+- name: Install PHP & related packages
+  apt:
+    pkg:
+      - php-xdebug
+      - gnupg
+      - libgpgme11
+      - libgpgme11-dev
+      - libgpg-error-dev
+      - libassuan-dev
+      - php-pear
+      - php-ssh2
+      - libxml2-dev
+    state: present
+  become: yes
+
+- name: Set propper PHP CLI versions
+  alternatives:
+    name: php
+    path: "/usr/bin/php{{params['php_version']}}"
+  become: yes
+
+- name: Disable all Apache's PHP module versions
+  apache2_module:
+    name: "{{ item }}"
+    state: absent
+    ignore_configcheck: true
+    force: True
+  with_items: ["php5.6", "php7.0", "php7.1", "php7.2", "php7.3", "php7.4"]
+  notify: apache-restart
+  become: yes
+  ignore_errors: yes
+
+- name: Enable Apache's configured php version
+  apache2_module:
+    name: "{{ item.module}}"
+    state: "{{ item.state}}"
+    ignore_configcheck: true
+  with_items:
+    - { module: "php{{ params['php_version'] }}", state: present}
+  notify: apache-restart
+  become: yes
+
+- name: Load Xdebug extension
+  template: src=xdebug.ini.j2 dest=/etc/php/{{ item.phpversion }}/{{ item.sapi }}/20-xdebug.ini
+  with_items:
+    - { sapi: 'cli/conf.d', phpversion: "{{params['php_version']}}"}
+    - { sapi: 'apache2/conf.d', phpversion: "{{params['php_version']}}"}
+    - { sapi: 'mods-available', phpversion: "{{params['php_version']}}"}
+  become: yes
+
+- name: Disable Xdebug by default
+  lineinfile:
+    dest: "/etc/php/{{ item.phpversion }}/{{ item.sapi }}/20-xdebug.ini"
+    regexp: '^zend_extension=xdebug'
+    line: ';zend_extension=xdebug.so'
+    backrefs: yes
+  with_items:
+    - { sapi: 'cli/conf.d', phpversion: "{{params['php_version']}}"}
+    - { sapi: 'apache2/conf.d', phpversion: "{{params['php_version']}}"}
+    - { sapi: 'mods-available', phpversion: "{{params['php_version']}}"}
+  become: yes

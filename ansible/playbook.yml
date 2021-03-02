@@ -1,0 +1,48 @@
+---
+- name: Ansible => Apply common configuration to all nodes
+  hosts: all
+  vars:
+    roles_enabled: "{{params['roles']}}"
+    rbenv:
+      env: system
+      version: v1.0.0
+      default_ruby: 2.3.0
+      rubies: "{{params['rubies']}}"
+      rbenv_owner: 'vagrant'
+      rbenv_group: 'vagrant'
+    rbenv_plugins:
+      - { name: 'rbenv-sudo', version: 'v0.1.0', repo: 'https://github.com/dcarley/rbenv-sudo.git' }
+      - { name: "ruby-build", version: "master", repo: "https://github.com/rbenv/ruby-build.git" }
+    pg_version: 9.5
+    pg_encoding: 'UTF-8'
+    pg_admin_user: 'postgres'
+    pg_default_auth_method: 'trust'
+    pg_cfg_srv_ssl_renegotiation_limit: 0
+
+  roles:
+    - { role: common, when: "'common' in roles_enabled" }
+    - { role: zsh, when: "'zsh' in roles_enabled" }
+    - { role: apache, when: "'apache' in roles_enabled" }
+    - { role: mysql, when: "'mysql' in roles_enabled" }
+    - { role: composer, when: "'composer' in roles_enabled" }
+    - { role: bashrc_alias, when: "'bashrc_alias' in roles_enabled" }
+    - { role: nodejs, when: "'nodejs' in roles_enabled" }
+    - { role: grunt, when: "'grunt' in roles_enabled" }
+    - { role: bower, when: "'bower' in roles_enabled" }
+    - { role: compass, when: "'compass' in roles_enabled" }
+    - { role: gulp, when: "'gulp' in roles_enabled" }
+    - { role: angular_cli, when: "'angular_cli' in roles_enabled" }
+    - { role: rbenv, when: "'rbenv' in roles_enabled" }
+    - { role: rails, when: "'rails' in roles_enabled" }
+    - { role: redis, when: "'redis' in roles_enabled" }
+    - { role: upstart, when: "'upstart' in roles_enabled" }
+    - { role: rabbitmq, when: "'rabbitmq' in roles_enabled" }
+    - { role: blackfire, when: "'blackfire' in roles_enabled" }
+    - { role: mailcatcher, when: "'mailcatcher' in roles_enabled" }
+    - { role: ssh_tunnel, when: "'ssh_tunnel' in roles_enabled" }
+    - { role: beanstalkd, when: "'beanstalkd' in roles_enabled" }
+    - { role: maven, when: "'maven' in roles_enabled" }
+    - { role: varnish, when: "'varnish' in roles_enabled" }
+    - { role: yarn, when: "'yarn' in roles_enabled" }
+    - { role: wkhtmltopdf, when: "'wkhtmltopdf' in roles_enabled" }
+    - { role: sftp, when: "'sftp' in roles_enabled" }

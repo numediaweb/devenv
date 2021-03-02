@@ -1,0 +1,48 @@
+---
+- name: Add ondrej/apache2 PPA
+  apt_repository: repo='ppa:ondrej/apache2'
+  become: yes
+
+- name: Set /var/lock/apache2 owner
+  file: path=/var/lock/apache2 recurse=yes state=directory group={{ apache_group }} owner={{ apache_user }}
+  become: yes
+
+- name: Ensure Apache envvars file exists
+  copy:
+    src: envvars
+    dest: /etc/apache2/envvars
+    force: no
+  become: yes
+
+- name: Set Apache user and group
+  lineinfile: >
+    dest=/etc/apache2/envvars
+    regexp="{{ item.key }}"
+    line="{{ item.value }}"
+    state=present
+  with_items:
+   - { key: "^export APACHE_RUN_USER=", value: "export APACHE_RUN_USER={{ apache_user }}" }
+   - { key: "^export APACHE_RUN_GROUP=", value: "export APACHE_RUN_GROUP={{ apache_group }}" }
+  notify:
+   - apache-restart
+  become: yes
+
+- name: Set 'ServerName' directive globally
+  lineinfile: >
+    dest=/etc/apache2/apache2.conf
+    line="{{ item }}"
+  with_items:
+   - "ServerName localhost"
+  notify:
+   - apache-restart
+  become: yes
+
+- name: Fix Apache AH00169 caught SIGTERM, shutting down
+  lineinfile:
+    dest: "/etc/apache2/apache2.conf"
+    regexp: '#Mutex file:\${APACHE_LOCK_DIR} default'
+    line: 'Mutex file:${APACHE_LOCK_DIR} default'
+    backrefs: yes
+  notify:
+   - apache-restart
+  become: yes

@@ -1,0 +1,58 @@
+---
+- name: Add packagecloud apt key.
+  apt_key:
+    url: "{{ blackfire_gpg_key_url }}"
+    state: present
+  become: yes
+
+- name: Add packagecloud repository.
+  apt_repository:
+    repo: "{{ item }}"
+    state: present
+    update_cache: yes
+  register: packagecloud_repos
+  with_items:
+    - "deb http://packages.blackfire.io/debian any main"
+  become: yes
+
+- name: Update apt caches after repo is added.
+  apt: update_cache=yes
+  become: yes
+
+- name: Ensure Blackfire packages are installed.
+  package:
+    name: "{{ blackfire_packages }}"
+    state: present
+  notify:
+    - restart blackfire-agent
+  become: yes
+
+- name: Set server ID in config file
+  lineinfile: dest=/etc/blackfire/agent
+              regexp='server-id='
+              line='server-id={{ params['blackfire'].server_id }}'
+  become: yes
+
+- name: Set server token in config file
+  lineinfile: dest=/etc/blackfire/agent
+              regexp='server-token='
+              line='server-token={{ params['blackfire'].server_token }}'
+  notify: restart blackfire-agent
+  become: yes
+
+- name: Configure the local agent with the personnal server credentials
+  command: blackfire-agent --register --server-id={{ params['blackfire'].server_id }} --server-token={{ params['blackfire'].server_token }}
+  notify: restart blackfire-agent
+  become: yes
+
+- name: Set HOME env variable as wihout it Blackfire, cannot read "~/.blackfire.ini"
+  lineinfile: >
+    dest=/etc/apache2/envvars
+    regexp="{{ item.key }}"
+    line="{{ item.value }}"
+    state=present
+  with_items:
+   - { key: "^export HOME=", value: "export HOME={{ lookup('env','HOME') }}" }
+  notify:
+   - restart apache
+  become: yes

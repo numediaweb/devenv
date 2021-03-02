@@ -1,0 +1,121 @@
+{# Set up project folder #}
+{% if item.item.directory is defined | default(false) %}
+    {% set DocumentRoot = item.item.directory %}
+{% elif item.item.frameworkVersion is defined and item.item.frameworkVersion == 4 | default(false) %}
+    {% set DocumentRoot = "/var/www/" ~ item.item.projectFolder ~ "/public" %}
+{% else %}
+    {% set DocumentRoot = "/var/www/" ~ item.item.projectFolder ~ "/web" %}
+{% endif %}
+
+{# Set up VirtualHosts #}
+<VirtualHost *:80>
+    ServerName {{ item.item.host }}
+
+    SetEnv SYMFONY_ENV dev
+
+    {% if item.item.frameworkVersion is defined and item.item.frameworkVersion == 4 | default(false) %}
+        DocumentRoot {{ DocumentRoot }}
+        <Directory {{ DocumentRoot }}>
+            AllowOverride None
+            Order Allow,Deny
+            Allow from All
+
+            DirectoryIndex /index.php
+            FallbackResource /index.php
+        </Directory>
+    {% else %}
+
+    DocumentRoot {{ DocumentRoot }}
+    <Directory {{ DocumentRoot }}>
+        AllowOverride None
+        Order Allow,Deny
+        Allow from All
+
+        <IfModule mod_rewrite.c>
+            Options -MultiViews
+            RewriteEngine On
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteRule ^(.*)$ app.php [QSA,L]
+
+            RewriteEngine On
+            RewriteCond %{HTTP:Authorization} ^(.*)
+            RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
+        </IfModule>
+    </Directory>
+
+    <Directory {{ item.item.projectFolder }}/>
+        Options FollowSymlinks
+    </Directory>
+
+    <Directory {{ DocumentRoot }}/bundles>
+        <IfModule mod_rewrite.c>
+            RewriteEngine Off
+        </IfModule>
+    </Directory>
+
+        {% endif %}
+
+    ErrorLog ${APACHE_LOG_DIR}/{{ item.item.host }}_error.log
+    CustomLog ${APACHE_LOG_DIR}/{{ item.item.host }}_access.log combined
+</VirtualHost>
+
+{# Set up SSL VirtualHosts #}
+{% if item.item.ssl | default(true) %}
+#<IfModule mod_ssl.c>
+    <VirtualHost *:443>
+        ServerName {{ item.item.host }}
+
+        SetEnv SYMFONY_ENV dev
+
+        SSLEngine on
+        SSLCertificateFile /etc/apache2/ssl/{{ item.item.host }}.crt
+        SSLCertificateKeyFile /etc/apache2/ssl/{{ item.item.host }}.key
+
+        {% if item.item.frameworkVersion is defined and item.item.frameworkVersion == 4 | default(false) %}
+        DocumentRoot {{ DocumentRoot }}
+        <Directory {{ DocumentRoot }}>
+            AllowOverride None
+            Order Allow,Deny
+            Allow from All
+
+            DirectoryIndex /index.php
+            FallbackResource /index.php
+        </Directory>
+
+        {% else %}
+
+        DocumentRoot {{ DocumentRoot }}
+        <Directory {{ DocumentRoot }}>
+            AllowOverride None
+            Order Allow,Deny
+            Allow from All
+
+            <IfModule mod_rewrite.c>
+                Options -MultiViews
+                RewriteEngine On
+                RewriteCond %{REQUEST_FILENAME} !-f
+                RewriteRule ^(.*)$ app.php [QSA,L]
+
+                RewriteEngine On
+                RewriteCond %{HTTP:Authorization} ^(.*)
+                RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
+            </IfModule>
+        </Directory>
+
+        <Directory {{ item.item.projectFolder }}/>
+            Options FollowSymlinks
+        </Directory>
+
+        <Directory {{ DocumentRoot }}/bundles>
+            <IfModule mod_rewrite.c>
+                RewriteEngine Off
+            </IfModule>
+        </Directory>
+
+        {% endif %}
+
+        ErrorLog ${APACHE_LOG_DIR}/{{ item.item.host }}_error.log
+        CustomLog ${APACHE_LOG_DIR}/{{ item.item.host }}_access.log combined
+    </VirtualHost>
+#</IfModule>
+{% endif %}

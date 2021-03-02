@@ -1,0 +1,18 @@
+# defaults file for mailcatcher
+---
+mailcatcher_version: latest
+
+mailcatcher_user: mailcatcher
+mailcatcher_group: mailcatcher
+mailcatcher_groups: []
+
+mailcatcher_ip: 192.168.33.12
+mailcatcher_smtp_port: 1025
+mailcatcher_http_port: 1080
+
+mailcatcher_options:
+    ip: "{{ mailcatcher_ip }}" # Set the ip address of both servers
+    smtp-ip: "{{ mailcatcher_ip }}"   # Set the ip address of the smtp server
+    smtp-port: "{{ mailcatcher_smtp_port }}"    # Set the ip address of the smtp server
+    http-ip: "{{ mailcatcher_ip }}"   # Set the ip address of the http server
+    http-port: "{{ mailcatcher_http_port }}"    # Set the port address of the http server

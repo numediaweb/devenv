@@ -1,0 +1,36 @@
+#
+- name: php - set default php-fpm config
+  template:
+    src: "tasks/php/php5.6/templates/php-fpm.conf.j2"
+    dest: "/etc/php/5.6/fpm/php-fpm.conf"
+    mode: 0644
+    owner: "root"
+    group: "root"
+  become: yes
+
+- name: php - set default cli config
+  template:
+    src: "tasks/php/php5.6/templates/php.ini.cli.j2"
+    dest: "/etc/php/5.6/cli/php.ini"
+    mode: 0644
+    owner: "root"
+    group: "root"
+  become: yes
+
+- name: php - set default fpm config
+  template:
+    src: "tasks/php/php5.6/templates/php.ini.fpm.j2"
+    dest: "/etc/php/5.6/fpm/php.ini"
+    mode: 0644
+    owner: "root"
+    group: "root"
+  become: yes
+
+- name: php - set default pool config
+  template:
+    src: "tasks/php/php5.6/templates/pool.conf.j2"
+    dest: "/etc/php/5.6/fpm/pool.d/www.conf"
+    mode: 0644
+    owner: "root"
+    group: "root"
+  become: yes

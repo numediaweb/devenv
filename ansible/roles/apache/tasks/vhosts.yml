@@ -1,0 +1,134 @@
+- name: Clean previous enabled Apache virtual hosts
+  shell: rm -rf /etc/apache2/sites-enabled/*.*
+  become: yes
+
+- name: Clean previous available Apache virtual hosts
+  shell: rm -rf /etc/apache2/sites-available/*.*
+  become: yes
+
+- name: List available Symfony 3 project folders
+  stat: path=/var/www/{{item.projectFolder}}/web
+  register: symfony_3_projects
+  with_items: "{{params['vhosts']}}"
+  when: item.framework == "symfony"
+
+- name: List available Symfony 4 project folders
+  stat: path=/var/www/{{item.projectFolder}}/public
+  register: symfony_4_projects
+  with_items: "{{params['vhosts']}}"
+  when: item.framework == "symfony"
+
+- name: Merge Symfony 3 & 4 projects
+  set_fact:
+    symfony_projects: "{{symfony_3_projects.results}} + {{symfony_4_projects.results }}"
+
+- name: Create virtual hosts for symfony applications
+  template:
+    src: symfony_virtualhost.conf.j2
+    dest: "/etc/apache2/sites-available/{{ item.item.host }}.conf"
+  notify:
+    - apache-restart
+  become: yes
+  with_items: "{{ symfony_projects }}"
+  when: item.stat is defined and item.stat.exists == true
+
+- name: List available Laravel project folders
+  stat: path=/var/www/{{item.projectFolder}}
+  register: laravel_projects
+  with_items: "{{params['vhosts']}}"
+  when: item.framework == "laravel"
+
+- name: Create virtual hosts for laravel applications
+  template:
+    src=laravel_virtualhost.conf.j2
+    dest=/etc/apache2/sites-available/{{ item.item.host }}.conf
+  notify:
+    - apache-restart
+  become: yes
+  with_items: "{{ laravel_projects.results }}"
+  when: item.stat is defined and item.stat.exists == true
+
+- name: List available unknown framework project folders
+  stat: path={{item.directory | default("/var/www")}}
+  register: unknown_framework_projects
+  with_items: "{{params['vhosts']}}"
+  when: item.framework == "none"
+
+- name: Create virtual hosts for unknown framework applications
+  template:
+    src=default_virtualhost.conf.j2
+    dest=/etc/apache2/sites-available/{{ item.item.host }}.conf
+    force=true
+  notify:
+    - apache-restart
+  become: yes
+  with_items: "{{ unknown_framework_projects.results }}"
+  when: item.stat is defined and item.stat.exists == true
+
+- name: List available Rails project folders
+  stat: path={{item.directory}}
+  register: rails_projects
+  with_items: "{{params['vhosts']}}"
+  when: item.framework == "rails"
+
+- name: Create virtual hosts for rails applications
+  template:
+    src=rails_virtualhost.conf.j2
+    dest=/etc/apache2/sites-available/{{ item.item.host }}.conf
+  notify:
+    - apache-restart
+  become: yes
+  with_items: "{{ rails_projects.results }}"
+  when: item.stat is defined and item.stat.exists == true
+
+- name: Create virtual hosts for proxies
+  template:
+    src: proxies_virtualhost.conf.j2
+    dest: "/etc/apache2/sites-available/{{ item.host }}.conf"
+  notify:
+    - apache-restart
+  become: yes
+  with_items: "{{params['vhosts']}}"
+  when: 'item.isProxy is defined and item.isProxy | default(false)'
+
+- name: Prepare list of all available projects
+  set_fact:
+    projects: "{{symfony_projects}} + {{ laravel_projects.results }} + {{ unknown_framework_projects.results }} + {{ rails_projects.results }}"
+
+- name: Enabled Apache virtual hosts
+  command: a2ensite {{ item.item.host }}
+  args:
+      creates: /etc/apache2/sites-enabled/{{ item.item.host }}.conf
+  with_items: "{{ projects }}"
+  become: yes
+  notify:
+    - apache-reload
+  when: item.stat is defined and item.stat.exists == true and item.item is defined
+
+- name: Configure PHP
+  template: src={{ item.file }} dest=/etc/php/{{ item.phpversion }}/apache2/conf.d/{{ item.file }} owner=root group=root mode=0644
+  with_items:
+    - { file: 'zzz-custom.ini', phpversion: "{{params['php_version']}}"}
+  become: yes
+  notify:
+    - apache-restart
+
+- name: Configure PHP-CLI
+  template: src={{ item.file }} dest=/etc/php/{{ item.phpversion }}/cli/conf.d/{{ item.file }} owner=root group=root mode=0644
+  with_items:
+    - { file: 'zzz-custom.ini', phpversion: "{{params['php_version']}}"}
+  become: yes
+
+- name:  Enable PHP benchmarking
+  copy: src=templates/benchmark.php dest=~/bin/ mode=755
+
+- name: Ensure apache is started and enabled
+  service: name=apache2 state=started enabled=yes
+  become: yes
+
+- name: Ensure /etc/hosts has correct aliases
+  lineinfile:
+    path: /etc/hosts
+    line: "127.0.0.1	{{ item.host }}"
+  with_items: "{{params['vhosts']}}"
+  become: yes

@@ -1,0 +1,15 @@
+---
+- name: Ensure pecl is installed (if configured).
+  package:
+    name: "{{ php_pecl_package }}"
+    state: present
+  when: php_pecl_install_pecl
+  become: yes
+
+- name: Install PECL libaries.
+  shell: "yes '' | {{ php_pecl_install_command }} {{ item }}"
+  register: pecl_result
+  changed_when: pecl_result is succeeded
+  failed_when: "not (('already installed' in pecl_result.stdout) or ('install ok:' in pecl_result.stdout))"
+  with_items: "{{ php_pecl_extensions }}"
+  become: yes

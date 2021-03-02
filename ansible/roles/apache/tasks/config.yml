@@ -1,0 +1,57 @@
+---
+- name: Disable modules
+  command: a2enmod {{ item }} removes=/etc/apache2/mods-enabled/{{ item }}.load
+  with_items:
+    - mpm_event
+  become: yes
+  notify:
+  - apache-restart
+  notify:
+
+- name: Disable 7.1  modules
+  command: a2enmod {{ item }} removes=/etc/apache2/mods-enabled/{{ item }}.load
+  with_items:
+    - php7.1
+  become: yes
+  when: "{{params['php_version'] == 7.2}}"
+  notify:
+  - apache-restart
+
+- name: Enable 7.1  modules
+  command: a2enmod {{ item }} creates=/etc/apache2/mods-enabled/{{ item }}.load
+  with_items:
+    - php7.1
+  become: yes
+  when: "{{params['php_version'] == 7.1}}"
+
+- name: Disable 7.2 modules
+  command: a2enmod {{ item }} removes=/etc/apache2/mods-enabled/{{ item }}.load
+  with_items:
+    - php7.1
+  become: yes
+  when: "{{params['php_version'] == 7.1}}"
+  notify:
+  - apache-restart
+
+- name: Enable 7.2 modules
+  command: a2enmod {{ item }} creates=/etc/apache2/mods-enabled/{{ item }}.load
+  with_items:
+    - php7.2
+  become: yes
+  when: "{{params['php_version'] == 7.2}}"
+  notify:
+  - apache-restart
+
+- name: Enable generic modules
+  command: a2enmod {{ item }} creates=/etc/apache2/mods-enabled/{{ item }}.load
+  with_items:
+    - rewrite
+    - autoindex
+    - ssl
+    - proxy
+    - proxy_http
+    - expires
+#    - mpm_event
+  become: yes
+  notify:
+  - apache-restart

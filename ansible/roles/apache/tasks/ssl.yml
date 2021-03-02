@@ -1,0 +1,45 @@
+- name: Create ssl directory
+  file: path={{params['ssl'].folder}} state=directory group={{ apache_group }} owner={{ apache_user }}
+  become: yes
+
+# generate your own: https://deliciousbrains.com/ssl-certificate-authority-for-local-https-development/
+- name: Copy CA certificate and CA private key
+  copy:
+    src: "{{ item }}"
+    dest: "{{params['ssl'].folder}}"
+    mode: u+rw,g+r,o+r
+  with_fileglob:
+    - files/*
+  become: yes
+
+- name: Creating private keys for hosts
+  shell: openssl genrsa -out {{params['ssl'].folder}}/{{ item.host }}.key 2048
+  become: yes
+  args:
+    executable: "/bin/bash"
+  with_items: "{{params['vhosts']}}"
+  when: item.ssl|default(true)|bool == true
+
+- name: Creating CSR for hosts
+  shell: openssl req -new -key {{params['ssl'].folder}}/{{ item.host }}.key -nodes -out {{params['ssl'].folder}}/{{ item.host }}.csr -subj "/C={{params['ssl'].country_name}}/ST={{params['ssl'].state}}/L={{params['ssl'].locality}}/O={{params['ssl'].organization}}/CN={{ item.host }}"
+  become: yes
+  args:
+    executable: "/bin/bash"
+  with_items: "{{params['vhosts']}}"
+  when: item.ssl|default(true)|bool == true
+
+- name: Generate the Subject Alternative Name (SAN) extension per host
+  template:
+    src: ssl/extfile.ext
+    dest: "{{params['ssl'].folder}}/{{ item.host }}.ext"
+  become: yes
+  with_items: "{{params['vhosts']}}"
+  when: item.ssl|default(true)|bool == true
+
+- name: Create the certificate per host
+  shell: openssl x509 -req -in {{params['ssl'].folder}}/{{ item.host }}.csr -CA {{params['ssl'].folder}}/root_certificate_authority.pem -CAkey {{params['ssl'].folder}}/ca_key.key -passin pass:{{params['ssl'].pass_phrase}} -CAcreateserial -out {{params['ssl'].folder}}/{{ item.host }}.crt -days 824 -sha256 -extfile {{params['ssl'].folder}}/{{ item.host }}.ext
+  become: yes
+  args:
+    executable: "/bin/bash"
+  with_items: "{{params['vhosts']}}"
+  when: item.ssl|default(true)|bool == true

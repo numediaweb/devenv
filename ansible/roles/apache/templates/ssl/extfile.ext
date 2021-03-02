@@ -1,0 +1,13 @@
+authorityKeyIdentifier=keyid,issuer
+basicConstraints=CA:FALSE
+keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = {{ item.host }}
+
+# We need this for core: but better solution is needed
+DNS.2 = www.{{ item.host }}
+DNS.3 = api.{{ item.host }}
+
+IP.1 = {{ params['vm_ip'] }}

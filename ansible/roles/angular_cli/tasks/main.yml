@@ -1,0 +1,4 @@
+---
+- name: Angular CLI => Install CLI for Angular applications based on the ember-cli project.
+  npm: name=@angular/cli global=yes
+  become: yes

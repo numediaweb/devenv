@@ -1,0 +1,26 @@
+---
+- name: Include OS-specific variables.
+  include_vars: "main.yml"
+
+- name: Define redis_package.
+  set_fact:
+    redis_package: "{{ __redis_package }}"
+  when: redis_package is not defined
+
+- name: Ensure Redis is installed.
+  apt:
+    name: "{{ redis_package }}"
+    state: present
+  become: yes
+  become_user: root
+
+- name: Ensure Redis is configured.
+  template:
+    src: redis.conf.j2
+    dest: "{{ redis_conf_path }}"
+    mode: 0644
+  notify: restart redis
+  become: yes
+
+- name: Ensure Redis is running and enabled on boot.
+  service: "name={{ redis_daemon }} state=started enabled=yes"

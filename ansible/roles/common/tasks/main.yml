@@ -1,0 +1,79 @@
+---
+- name: apt update
+  apt: update_cache=yes cache_valid_time=3600
+  register: apt_result
+  until: apt_result|success
+  retries: 3
+  delay: 1
+  sudo: yes
+  ignore_errors: yes
+
+- name: retry if needed using command apt-get update
+  command: apt-get update
+  sudo: yes
+  when: apt_result|failed
+
+- name: Install packages
+  apt: pkg={{ item }} state=latest
+  become: yes
+  with_items:
+    - sudo
+    - bash-completion
+    - python-pycurl
+    - git
+    - htop
+    - tree
+    - vim
+    - curl
+    - zip
+    - rsync
+    - wget
+    - ant
+    - tmux
+    - dos2unix
+    - libpam-systemd
+    - slowhttptest
+
+- name: Copy tmux config
+  template: src=tmux.conf dest=~/.tmux.conf
+
+- name: Ensure ntp is installed
+  apt: pkg=ntp state=present
+  tags: ntp
+  become: yes
+
+- name: Ensure ntpd is running and enabled
+  service: name=ntp state=started enabled=yes
+  tags: ntp
+  become: yes
+
+- name: Ensure ntpdate is installed
+  apt: pkg=ntpdate state=present
+  become: yes
+
+- name: Update server time every hour
+  cron:
+    name: "Update server time every hour"
+    user: "vagrant"
+    minute: "0"
+    job: "sudo ntpdate ntp.ubuntu.com"
+
+- name: Add a ~/bin to PATH in Basch
+  lineinfile: dest=~/.bashrc line='PATH="$HOME/bin:$PATH"'
+
+- name: Make sure ~/bin exists
+  file: path=~/bin state=directory
+
+- name: Copy common files to ~/bin
+  copy: src={{ item }} dest=~/bin/  mode=755
+  with_fileglob:
+    - bin/*
+
+- name: Ensure symlinks for utilities exist
+  file: src=~/bin/{{ item | basename | regex_replace('(\w+(?:\.\w+)*$)', '\1') }} dest=~/bin/{{ item | basename | regex_replace('\.sh','') }} mode=755 state=link force=true
+  with_fileglob:
+    - bin/*
+
+- name: Allow composer cache directory to be writable
+  file: path=/home/vagrant/.composer owner=vagrant state=directory recurse=yes
+  become: yes

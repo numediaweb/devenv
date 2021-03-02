@@ -1,0 +1,57 @@
+---
+- name: Discover if there is already a version of beanstalkd installed.
+  shell: which beanstalkd > /dev/null && beanstalkd -v | cut -d' ' -f2
+  changed_when: False
+  failed_when: False
+  register: installed_beanstalkd_version
+
+- name: Ensure beanstalkd user exists.
+  user: name={{ params['beanstalkd'].beanstalkd_user }} comment="Beanstalkd Server" createhome=no shell=/bin/false system=yes state=present
+  register: user_changed
+  become: yes
+
+- name: Ensure persistence storage location exists and has proper ownership.
+  file: path="{{ params['beanstalkd'].beanstalkd_storage }}" state=directory owner={{ params['beanstalkd'].beanstalkd_user }} group={{ params['beanstalkd'].beanstalkd_user }} recurse=true
+  register: storage_dir_changed
+  notify: restart beanstalkd
+  become: yes
+
+- name: Get tarfile.
+  get_url:
+    url: "https://github.com/kr/beanstalkd/archive/v{{ params['beanstalkd'].beanstalkd_version }}.tar.gz"
+    dest: "/tmp/beanstalkd-{{ params['beanstalkd'].beanstalkd_version }}.tar.gz"
+  when: installed_beanstalkd_version.stdout != params['beanstalkd'].beanstalkd_version
+
+- name: Unarchive.
+  command: tar -zxvf /tmp/beanstalkd-{{ params['beanstalkd'].beanstalkd_version }}.tar.gz chdir=/tmp creates=/tmp/beanstalkd-{{ params['beanstalkd'].beanstalkd_version }}
+  when: installed_beanstalkd_version.stdout != params['beanstalkd'].beanstalkd_version
+
+- name: Make.
+  command: make chdir=/tmp/beanstalkd-{{ params['beanstalkd'].beanstalkd_version }}/ creates=/tmp/beanstalkd-{{ params['beanstalkd'].beanstalkd_version}}/beanstalkd
+  when: installed_beanstalkd_version.stdout != params['beanstalkd'].beanstalkd_version
+
+- name: Remove current version.
+  file: path=/usr/local/bin/beanstalkd state=absent
+  when: installed_beanstalkd_version.stdout != params['beanstalkd'].beanstalkd_version
+
+- name: Install.
+  command: make install chdir=/tmp/beanstalkd-{{ params['beanstalkd'].beanstalkd_version }}/
+  when: installed_beanstalkd_version.stdout != params['beanstalkd'].beanstalkd_version
+  notify: restart beanstalkd
+  become: yes
+
+- name: Ensure startup script is correct.
+  template: src=beanstalkd.initd dest=/etc/init.d/beanstalkd mode=0755
+  become: yes
+  
+- name: Stop service (in case beanstalkd_user changed, we can't wait for the handler).
+  service: name=beanstalkd state=stopped
+  when: user_changed.changed or storage_dir_changed.changed
+
+- name: Ensure configuration is correct.
+  template: src=beanstalkd dest=/etc/default/beanstalkd
+  become: yes
+
+#- name: Ensure service is running, and is configured to start on boot.
+#  service: name=beanstalkd enabled=yes state=started
+#  become: yes

@@ -1,0 +1,4 @@
+---
+# tasks file for apache-maven
+- include_tasks: install-maven.yml
+- include_tasks: install-java.yml
