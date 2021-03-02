@@ -121,6 +121,10 @@ Notes about the `ERR_ICANN_NAME_COLLISION` bug on Windows; if you see this error
 
 PLEASE USE [THIS TUTORIAL](https://numediaweb.com/install-ssl-tls-development-machine/1516) TO GENERATE YOUR OWN CERTIFICATE AUTHORITY!
 
+1. From the root of the devenv, run this command:
+```
+openssl req -x509 -config ansible/roles/apache/files/openssl-ca.cnf -newkey rsa:4096 -sha256 -nodes -out ansible/roles/apache/files/root_certificate_authority.pem -outform PEM && mv cakey.pem ansible/roles/apache/files/ca_key.key
+```
 This dev environement expects the generated certificate to be copied to  [ansible/roles/apache/files/root_certificate_authority.pem](ansible/roles/apache/files/root_certificate_authority.pem) in order to trust the hosts from dev environement.
 
 Due to Google Chrome [requiring ssl](https://goo.gl/5ZqJ8a) when using the .dev TLD: every host now has ssl by default.
