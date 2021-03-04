@@ -18,6 +18,9 @@
 - include_tasks: tasks/php/php7.4.yml
   when: params['php_version'] == 7.4
 
+- include_tasks: tasks/php/php8.0.yml
+  when: params['php_version'] == 8.0
+
 - name: Install PHP & related packages
   apt:
     pkg:
