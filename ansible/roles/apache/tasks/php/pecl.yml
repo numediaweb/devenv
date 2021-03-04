@@ -6,10 +6,11 @@
   when: php_pecl_install_pecl
   become: yes
 
-- name: Install PECL libaries.
+- name: Install PECL libaries supported also by PHP 8
   shell: "yes '' | {{ php_pecl_install_command }} {{ item }}"
   register: pecl_result
   changed_when: pecl_result is succeeded
   failed_when: "not (('already installed' in pecl_result.stdout) or ('install ok:' in pecl_result.stdout))"
-  with_items: "{{ php_pecl_extensions }}"
+  with_items:
+    - xdebug
   become: yes

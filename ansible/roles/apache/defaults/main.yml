@@ -15,9 +15,6 @@ apache_group: vagrant
 php_pecl_package: php-pear
 php_pecl_install_pecl: true
 php_pecl_install_command: "pecl install"
-php_pecl_extensions:
- - xdebug
- - gnupg
 
 ## Pear task
 php_pear_channels:

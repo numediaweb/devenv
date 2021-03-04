@@ -22,6 +22,5 @@
       - php7.4-bz2
       - php7.4-soap
       - php7.4-gmp
-      - php-pear
     state: present
   become: yes
