@@ -10,6 +10,7 @@
   apt:
     name: apt-transport-https
     state: present
+  become: yes
 
 - name: Add packagecloud.io Varnish apt key.
   apt_key:
