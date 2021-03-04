@@ -1,6 +1,6 @@
 # Vagrant Development Environment
 
-This Vagrant Setup provides you with a basic Ubuntu 18.04.2 LTS (Bionic Beaver) that contains everything that you needed to develop with PHP (multiple versions are availble and can be enabled in config: 5.6, 7.1, 7.2, 7.4). It contains the Apache2 Web Server, MySQL Server as well as all required tools, like curl and redis.
+This Vagrant Setup provides you with a basic Ubuntu 18.04.2 LTS (Bionic Beaver) that contains everything that you needed to develop with PHP (multiple versions are availble and can be enabled in config: 5.6, 7.4, 8.0). It contains the Apache2 Web Server, MySQL Server as well as all required tools, like curl and redis.
 
 Installed dependencies can be found in [config.yml -> roles](config.yml).
 
@@ -355,7 +355,7 @@ ZSH is a terminal that can pratically predict what you want to type, save a lot 
 
 If you experience this error:
 
-`failed: [default] (item=php7.1) => {"changed": true, "cmd": ["a2enmod", "php7.1"], "delta": "0:00:00.031828", "end": "2019-01-17 09:27:19.636172", "item": "php7.1", "msg": "non-zero return code", "rc": 1, "start": "2019-01-17 09:27:19.604344", "stderr": "ERROR: Module mpm_event is enabled - cannot proceed due to conflicts. It needs to be disabled first!\nERROR: Could not enable dependency mpm_prefork for php7.1, aborting", "stderr_lines": ["ERROR: Module mpm_event is enabled - cannot proceed due to conflicts. It needs to be disabled first!", "ERROR: Could not enable dependency mpm_prefork for php7.1, aborting"], "stdout": "Considering dependency mpm_prefork for php7.1:\nConsidering conflict mpm_event for mpm_prefork:\nConsidering conflict mpm_worker for mpm_prefork:", "stdout_lines": ["Considering dependency mpm_prefork for php7.1:", "Considering conflict mpm_event for mpm_prefork:", "Considering conflict mpm_worker for mpm_prefork:"]}`
+`failed: [default] (item=php7.4) => {"changed": true, "cmd": ["a2enmod", "php7.4"], "delta": "0:00:00.031828", "end": "2019-01-17 09:27:19.636172", "item": "php7.4", "msg": "non-zero return code", "rc": 1, "start": "2019-01-17 09:27:19.604344", "stderr": "ERROR: Module mpm_event is enabled - cannot proceed due to conflicts. It needs to be disabled first!\nERROR: Could not enable dependency mpm_prefork for php7.4, aborting", "stderr_lines": ["ERROR: Module mpm_event is enabled - cannot proceed due to conflicts. It needs to be disabled first!", "ERROR: Could not enable dependency mpm_prefork for php7.4, aborting"], "stdout": "Considering dependency mpm_prefork for php7.4:\nConsidering conflict mpm_event for mpm_prefork:\nConsidering conflict mpm_worker for mpm_prefork:", "stdout_lines": ["Considering dependency mpm_prefork for php7.4:", "Considering conflict mpm_event for mpm_prefork:", "Considering conflict mpm_worker for mpm_prefork:"]}`
 
 then first you need to ssh to the vagrant guest machine:
 ```
@@ -410,7 +410,7 @@ Simply remove the `node_modules` folder from host machine and re-run the service
 
 ### Syntax error: “fi” unexpected (expecting “then”) in bash script
 
-Most probably this is because carriage-return `\r`. To fix this use the dos2unix command. Ex. `dos2unix ansible/roles/common/files/bin/changephp_7.1.sh `
+Most probably this is because carriage-return `\r`. To fix this use the dos2unix command. Ex. `dos2unix ansible/roles/common/files/bin/changephp_7.4.sh `
 
 ### Vagrant was unable to mount VirtualBox shared folder
 
@@ -433,13 +433,17 @@ This is related to the version of your guest addition and virtual box (`vboxmana
 
 ### Segmentation fault (core dumped)
 
-Apache couldn't start as some configuration went wrong. The problem may occur because we previously installed php5.6 and php7.1 Run:
+Apache couldn't start as some configuration went wrong. The problem may occur because we previously installed php5.6 and php7.4 Run:
 ```
-sudo a2dismod php7.1
-sudo service apache2 restart
+sudo a2dismod php5.6 php7.4 php8.0 && sudo service apache2 restart && sudo systemctl status apache2
 ```
 
-Tip: Use `sudo apache2ctl -V` to get server config like: version, configuration file path etc..
+Tips: 
+* Use `sudo apache2ctl -V` to get server config like: version, configuration file path etc..
+* Check status `sudo systemctl status apache2` or `sudo systemctl status apache2.service`
+* View error logs: `sudo find /var/log/apache2  -name "*.log" | sudo xargs tail -f -n 100`
+* View error logs: `sudo apache2ctl status`
+* Show enabled modules: `sudo apache2ctl -t -D DUMP_MODULES`
 
 ### Database Connection error of authenticate key on SSH tunnel:
 Remove the key from file /home/coeus/.ssh/known_hosts against the IP 192.168.33.12. And then re-test the connection. It will add the new key and will proceed successfully.

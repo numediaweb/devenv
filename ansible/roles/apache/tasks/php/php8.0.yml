@@ -1,11 +1,43 @@
 ---
+- name: Copy gnupg.so extensions
+  copy: src=files/{{ item }}/ dest=/usr/lib/php/{{ item }}
+  with_items:
+    - 20200930
+  become: yes
+
 - name: Install PHP 8.0
   apt:
     pkg:
+      - php8.0
       - libapache2-mod-php8.0
-      - php8.0-dev
+    state: present
+  notify: apache-restart
+  become: yes
+
+- name: Install Php-FPM; a FastCGI process manager for PHP
+  apt:
+    pkg:
       - php8.0-fpm
       - libapache2-mod-fcgid
+    state: present
+  notify: apache-restart
+  become: yes
+
+- name: Enable PHP-FPM as it is not enabled in Apache by default.
+  apache2_module:
+    name: "{{ item.module}}"
+    state: "{{ item.state}}"
+    ignore_configcheck: true
+  with_items:
+    - { module: "proxy_fcgi", state: present}
+    - { module: "setenvif", state: present}
+  notify: apache-restart
+  become: yes
+
+- name: Install PHP 8.0 extensions
+  apt:
+    pkg:
+      - php8.0-dev # for compiling other extensions like xdebug
       - php8.0-cli
       - php8.0-curl
       - php8.0-gd
@@ -24,28 +56,6 @@
       - php8.0-bz2
       - php8.0-soap
       - php8.0-gmp
-      - php-pear
     state: present
-  become: yes
-
-- name:  Enable PHP-FPM as it is not enabled in Apache by default.
-  apache2_module:
-    name: "{{ item.module}}"
-    state: "{{ item.state}}"
-    ignore_configcheck: true
-  with_items:
-    - { module: "proxy_fcgi", state: present}
-    - { module: "setenvif", state: present}
-  notify: apache-restart
-  become: yes
-
-- name: Enabling conf
-  command: >
-    a2enconf {{ item }}
-  args:
-    creates: "/etc/apache2/conf-enabled/{{ item }}.conf"
-  when: item.state is not defined or item.state != 'absent'
-  with_items:
-    - php8.0-fpm
   notify: apache-restart
   become: yes
