@@ -3,9 +3,8 @@
 - include_tasks: php/php.yml
 - include_tasks: php/pecl.yml
 - include_tasks: php/pear.yml
-  when: params['php_version'] in ["7.0", "7.1", "7.2", "7.3", "7.4"]
+  when: params['php_version'] in ["7.4"]
 - include_tasks: tasks/apache.yml
 - include_tasks: tasks/phpunit.yml
 - include_tasks: tasks/ssl.yml
-- include_tasks: tasks/config.yml
 - include_tasks: tasks/vhosts.yml
