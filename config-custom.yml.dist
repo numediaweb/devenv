@@ -1,6 +1,6 @@
 synced_folder: [YOUR_PERSONAL_WORLKSPACE_FOLDER]
 
-# available versions: 5.6, 7.1, 7.2, 7.4
+# available versions: 5.6, 7.1, 7.2, 7.4, 8.0
 php_version: 7.4
 
 vm_memory: 4096
