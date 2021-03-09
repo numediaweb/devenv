@@ -56,6 +56,24 @@
   become: yes
   ignore_errors: yes
 
+- name: Copy pre-compiled 5.6 Pecl extensions
+  copy: src={{ item }} dest=/usr/lib/php/20131226  mode=755
+  with_fileglob:
+    - 20131226/*
+  become: yes
+
+- name: Copy pre-compiled 7.4 Pecl extensions
+  copy: src={{ item }} dest=/usr/lib/php/20190902  mode=755
+  with_fileglob:
+    - 20190902/*
+  become: yes
+
+- name: Copy pre-compiled 8.0 Pecl extensions
+  copy: src={{ item }} dest=/usr/lib/php/20200930  mode=755
+  with_fileglob:
+    - 20200930/*
+  become: yes
+
 - name: Load Xdebug extension
   template: src=xdebug.ini.j2 dest=/etc/php/{{ item.phpversion }}/{{ item.sapi }}/20-xdebug.ini
   with_items:

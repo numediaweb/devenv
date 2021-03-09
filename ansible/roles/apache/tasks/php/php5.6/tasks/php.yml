@@ -30,12 +30,6 @@
     state: "present"
   become: yes
 
-- name:  Copy gnupg.so extensions
-  copy: src=files/{{ item }}/ dest=/usr/lib/php/{{ item }}
-  with_items:
-    - 20131226
-  become: yes
-
 - name: php - ensure pid directory exists
   file:
     path: "/run/php"

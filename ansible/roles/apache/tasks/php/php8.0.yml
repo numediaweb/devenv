@@ -1,10 +1,4 @@
 ---
-- name: Copy gnupg.so extensions
-  copy: src=files/{{ item }}/ dest=/usr/lib/php/{{ item }}
-  with_items:
-    - 20200930
-  become: yes
-
 - name: Install PHP 8.0
   apt:
     pkg:
