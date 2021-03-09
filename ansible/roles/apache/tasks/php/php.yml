@@ -75,3 +75,19 @@
     - { sapi: 'apache2/conf.d', phpversion: "{{params['php_version']}}"}
     - { sapi: 'mods-available', phpversion: "{{params['php_version']}}"}
   become: yes
+
+- name: Add a ~/bin to PATH in Basch
+  lineinfile: dest=~/.bashrc line='PATH="$HOME/bin:$PATH"'
+
+- name: Make sure ~/bin exists
+  file: path=~/bin state=directory
+
+- name: Copy the php switcher script to ~/bin
+  copy: src={{ item }} dest=~/bin/  mode=755
+  with_fileglob:
+    - bin/*
+
+- name: Ensure symlinks for utilities exist
+  file: src=~/bin/{{ item | basename | regex_replace('(\w+(?:\.\w+)*$)', '\1') }} dest=~/bin/{{ item | basename | regex_replace('\.sh','') }} mode=755 state=link force=true
+  with_fileglob:
+    - bin/*

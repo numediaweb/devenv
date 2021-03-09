@@ -1,6 +1,6 @@
 # Vagrant Development Environment
 
-This Vagrant Setup provides you with a basic Ubuntu 18.04.2 LTS (Bionic Beaver) that contains everything that you needed to develop with PHP (multiple versions are availble and can be enabled in config: 5.6, 7.4, 8.0). It contains the Apache2 Web Server, MySQL Server as well as all required tools, like curl and redis.
+This Vagrant Setup provides you with a basic Ubuntu 18.04.2 LTS (Bionic Beaver) that contains everything that you needed to develop with PHP (multiple versions are availble and can be enabled in config: 5.6, 7.4, 8.0 or [switched to](#switching-between-php-versions) instantly). It contains the Apache2 Web Server, MySQL Server, Varnish, Redis as well as many common tools.
 
 Installed dependencies can be found in [config.yml -> roles](config.yml).
 
@@ -136,6 +136,7 @@ Run `vagrant provision` to generate the certificates.
 
 
 You can always check a dev domain's certificate using for example: `sudo openssl x509 -in /etc/apache2/ssl/my-project.dev.crt -text -noout`
+
 ### Install for Google Chrome on MAC
 
 * Add the included [ansible/roles/apache/files/root_certificate_authority.pem](ansible/roles/apache/files/root_certificate_authority.pem) certificate to the `login` keychain not the System keychain. But if you want to trust the certificates for others users of the mac you should add it to System keychain.
@@ -172,6 +173,13 @@ Let's say you want to debug the project named `example` that uses `example.dev` 
 ### Xdebug and RabbitMQ consumer commands
 
 Running `c rabbitmq:consumer -m 100 work_queue_consume` doesn't triger xdebug in the IDE. To make PhpStorm aware of the connection you need to prefix the command with the environement variable: `PHP_IDE_CONFIG="serverName=aggregate-reviews.dev" c rabbitmq:consumer -m 100 work_queue_consume`
+
+## Switching between PHP versions
+
+This DevEnv contains a utility script that allows switching between different available PHP versions. To switch to PHP 8.0 do:
+```shell
+phpswitch 8.0
+```
 
 ## Redis
 
