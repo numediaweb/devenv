@@ -18,6 +18,7 @@ Installed dependencies can be found in [config.yml -> roles](config.yml).
     * [Install for Google Chrome on MAC](#install-for-google-chrome-on-mac)
     * [Install for Google Chrome on Windows](#install-for-google-chrome-on-windows)
     * [Install for Firefox](#install-for-firefox)
+  * [Switching between PHP versions](#switching-between-php-versions)
   * [Debugging with PHPStorm: Xdebug](#debugging-with-phpstorm-xdebug)
     * [Xdebug on the CLI](#xdebug-on-the-cli)
   * [Redis](#redis)
