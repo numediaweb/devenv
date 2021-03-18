@@ -20,6 +20,7 @@
   when: "mailcatcher_version != 'latest'"
   tags:
     - mailcatcher-install-specific
+  become: yes
 
 - name: install mailcatcher (latest version)
   gem:
@@ -30,11 +31,14 @@
   when: "mailcatcher_version == 'latest'"
   tags:
     - mailcatcher-install-latest
+  become: yes
 
 - name: Configure PHP's sendmail_path
   template: src={{ item.file }} dest=/etc/php/{{ item.phpversion }}/apache2/conf.d/{{ item.file }} owner=root group=root mode=0644
   with_items:
-    - { file: 'mailcatcher.ini', phpversion: '7.2'}
+    - { file: 'mailcatcher.ini', phpversion: '5.6'}
+    - { file: 'mailcatcher.ini', phpversion: '7.4'}
+    - { file: 'mailcatcher.ini', phpversion: '8.0'}
   become: yes
   notify:
     - apache-restart
