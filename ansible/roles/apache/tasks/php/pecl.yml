@@ -12,5 +12,6 @@
   changed_when: pecl_result is succeeded
   failed_when: "not (('already installed' in pecl_result.stdout) or ('install ok:' in pecl_result.stdout))"
   with_items:
-    - xdebug
+    - xdebug # requires PHP (version >= 7.2.0, version <= 8.0.99)
   become: yes
+  when: params['php_version'] != 5.6

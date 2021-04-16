@@ -2,6 +2,7 @@
 - name: Add PHP PPA
   apt_repository: repo='ppa:ondrej/php'
   become: yes
+  ignore_errors: yes
 
 - name: Creates default Apache html directory
   file: path=/var/www/html state=directory
@@ -14,6 +15,24 @@
     - php8.0
   become: yes
   notify: apache-restart
+
+- name: Copy pre-compiled 5.6 Pecl extensions
+  copy: src={{ item }} dest=/usr/lib/php/20131226  mode=755
+  with_fileglob:
+    - 20131226/*
+  become: yes
+
+- name: Copy pre-compiled 7.4 Pecl extensions
+  copy: src={{ item }} dest=/usr/lib/php/20190902  mode=755
+  with_fileglob:
+    - 20190902/*
+  become: yes
+
+- name: Copy pre-compiled 8.0 Pecl extensions
+  copy: src={{ item }} dest=/usr/lib/php/20200930  mode=755
+  with_fileglob:
+    - 20200930/*
+  become: yes
 
 - include_tasks: tasks/php/php5.6.yml
   when: params['php_version'] == 5.6
@@ -53,25 +72,6 @@
   with_items:
     - { module: "php{{ params['php_version'] }}", state: present}
   notify: apache-restart
-  become: yes
-  ignore_errors: yes
-
-- name: Copy pre-compiled 5.6 Pecl extensions
-  copy: src={{ item }} dest=/usr/lib/php/20131226  mode=755
-  with_fileglob:
-    - 20131226/*
-  become: yes
-
-- name: Copy pre-compiled 7.4 Pecl extensions
-  copy: src={{ item }} dest=/usr/lib/php/20190902  mode=755
-  with_fileglob:
-    - 20190902/*
-  become: yes
-
-- name: Copy pre-compiled 8.0 Pecl extensions
-  copy: src={{ item }} dest=/usr/lib/php/20200930  mode=755
-  with_fileglob:
-    - 20200930/*
   become: yes
 
 - name: Load Xdebug extension
