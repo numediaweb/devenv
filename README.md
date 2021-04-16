@@ -140,19 +140,19 @@ You can always check a dev domain's certificate using for example: `sudo openssl
 
 ### Install for Google Chrome on MAC
 
-* Add the included [ansible/roles/apache/files/root_certificate_authority.pem](ansible/roles/apache/files/root_certificate_authority.pem) certificate to the `login` keychain not the System keychain. But if you want to trust the certificates for others users of the mac you should add it to System keychain.
+* Add the previously generated [ansible/roles/apache/files/root_certificate_authority.pem](ansible/roles/apache/files/root_certificate_authority.pem) certificate to the `login` keychain not the System keychain. But if you want to trust the certificates for others users of the mac you should add it to System keychain.
 * In the Keychain Access search for the certificate you have just added and double click on it to open and choose “Always Trust,” and type your OSX user password.
 
 ### Install for Google Chrome on Windows
 
 * Use Chrome's Settings -> show advanced settings -> Manage Certificates -> Import.
-* Add the the included [ansible/roles/apache/files/root_certificate_authority.pem](ansible/roles/apache/files/root_certificate_authority.pem) certificate to `Trusted Root Certification Authorities`.
+* Add the the previously generated [ansible/roles/apache/files/root_certificate_authority.pem](ansible/roles/apache/files/root_certificate_authority.pem) certificate to `Trusted Root Certification Authorities`.
 
 
 ### Install for Firefox
 
 * Go to firefox [preferences](about:preferences) and search for `view certificates` to open the certificate manager.
-* Go to `Authorities` and click on `import` and add the the included [ansible/roles/apache/files/root_certificate_authority.pem](ansible/roles/apache/files/root_certificate_authority.pem) certificate to be truested.
+* Go to `Authorities` and click on `import` and add the the previously generated [ansible/roles/apache/files/root_certificate_authority.pem](ansible/roles/apache/files/root_certificate_authority.pem) certificate to be truested.
 
 
 ## Debugging with PHPStorm: Xdebug
