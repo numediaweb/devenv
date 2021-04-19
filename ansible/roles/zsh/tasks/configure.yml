@@ -28,6 +28,7 @@
   check_mode: no
   when: item.command is defined
   register: zsh_register_commands_exists
+  ignore_errors: yes
 
 - name: Merge hotkeys lists
   set_fact:

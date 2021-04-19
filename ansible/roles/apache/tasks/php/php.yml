@@ -73,6 +73,7 @@
     - { module: "php{{ params['php_version'] }}", state: present}
   notify: apache-restart
   become: yes
+  ignore_errors: yes
 
 - name: Load Xdebug extension
   template: src=xdebug.ini.j2 dest=/etc/php/{{ item.phpversion }}/{{ item.sapi }}/20-xdebug.ini
