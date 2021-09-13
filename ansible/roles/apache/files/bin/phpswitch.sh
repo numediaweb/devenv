@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 echo "PHP version switcher"
-VERSION=${1?Error: No PHP version given! Available versions are: [5.6, 7.4, 8.0]}
+VERSION=${1?Error: No PHP version given! Available versions are: [5.6, 7.2, 7.4, 8.0]}
 CURRENT_VERSION=$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')
 
 echo "The current versioin is: $VERSION"
 
-sudo a2dismod php5.6 php7.4 php8.0 &&
+sudo a2dismod php5.6 php7.2 php7.4 php8.0 &&
 sudo a2enmod php"$VERSION" &&
 sudo service apache2 restart &&
 sudo systemctl restart apache2 &&

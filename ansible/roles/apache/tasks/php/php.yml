@@ -11,6 +11,7 @@
   command: a2dismod {{ item }} removes=/etc/apache2/mods-enabled/{{ item }}.load
   with_items:
     - php5.6
+    - php7.2
     - php7.4
     - php8.0
   become: yes
@@ -36,6 +37,9 @@
 
 - include_tasks: tasks/php/php5.6.yml
   when: params['php_version'] == 5.6
+
+- include_tasks: tasks/php/php7.2.yml
+  when: params['php_version'] == 7.2
 
 - include_tasks: tasks/php/php7.4.yml
   when: params['php_version'] == 7.4
