@@ -50,6 +50,7 @@ Installed dependencies can be found in [config.yml -> roles](config.yml).
 - nfs-kernel-server (linux: sudo apt-get install nfs-common nfs-kernel-server)
 - [vagrant-winnfsd](https://github.com/winnfsd/vagrant-winnfsd) (windows)
 - [vagrant-vbguest](https://github.com/dotless-de/vagrant-vbguest)
+- [vagrant-disksize](https://github.com/sprotheroe/vagrant-disksize)
 
 ### Clone the repository
 
