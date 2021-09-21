@@ -17,6 +17,10 @@
   become: yes
   notify: apache-restart
 
+- name: Ensures "/usr/lib/php/" dir exists
+  file: path=/usr/lib/php state=directory
+  become: yes
+
 - name: Copy pre-compiled 5.6 Pecl extensions
   copy: src={{ item }} dest=/usr/lib/php/20131226  mode=755
   with_fileglob:

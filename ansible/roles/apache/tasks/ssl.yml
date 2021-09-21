@@ -1,3 +1,19 @@
+- name: Disable ssl module
+  apache2_module:
+    state: absent
+    name: ssl
+    identifier: ssl_module
+    force: true
+  become: yes
+
+- name: Enable ssl module
+  apache2_module:
+    state: present
+    name: ssl
+    identifier: ssl_module
+    force: true
+  become: yes
+
 - name: Create ssl directory
   file: path={{params['ssl'].folder}} state=directory group={{ apache_group }} owner={{ apache_user }}
   become: yes

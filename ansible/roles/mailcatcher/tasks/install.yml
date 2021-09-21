@@ -33,10 +33,20 @@
     - mailcatcher-install-latest
   become: yes
 
+- name: Ensures "/etc/php/*" directories exists
+  file: path=/etc/php/{{ item.phpversion }}/apache2/conf.d/ state=directory
+  with_items:
+    - { phpversion: '5.6'}
+    - { phpversion: '7.2'}
+    - { phpversion: '7.4'}
+    - { phpversion: '8.0'}
+  become: yes
+
 - name: Configure PHP's sendmail_path
-  template: src={{ item.file }} dest=/etc/php/{{ item.phpversion }}/apache2/conf.d/{{ item.file }} owner=root group=root mode=0644
+  template: src={{ item.file }} dest=/etc/php/{{ item.phpversion }}/apache2/conf.d/{{ item.file }} force=yes owner=root group=root mode=0644
   with_items:
     - { file: 'mailcatcher.ini', phpversion: '5.6'}
+    - { file: 'mailcatcher.ini', phpversion: '7.2'}
     - { file: 'mailcatcher.ini', phpversion: '7.4'}
     - { file: 'mailcatcher.ini', phpversion: '8.0'}
   become: yes

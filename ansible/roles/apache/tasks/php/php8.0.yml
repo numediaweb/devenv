@@ -17,14 +17,28 @@
   notify: apache-restart
   become: yes
 
+- name: Disable PHP-FPM modules to avoid errors
+  apache2_module:
+    state: absent
+    name: "{{ item.module}}"
+    identifier: "{{ item.identifier}}"
+    force: true
+  with_items:
+    - { module: "proxy_fcgi", identifier: proxy_fcgi_module}
+    - { module: "setenvif", identifier: setenvif_module}
+  notify: apache-restart
+  become: yes
+
 - name: Enable PHP-FPM as it is not enabled in Apache by default.
   apache2_module:
     name: "{{ item.module}}"
-    state: "{{ item.state}}"
+    identifier: "{{ item.identifier}}"
+    state: present
     ignore_configcheck: true
+    force: true
   with_items:
-    - { module: "proxy_fcgi", state: present}
-    - { module: "setenvif", state: present}
+    - { module: "proxy_fcgi", identifier: proxy_fcgi_module}
+    - { module: "setenvif", identifier: setenvif_module}
   notify: apache-restart
   become: yes
 
