@@ -1,5 +1,6 @@
 ---
 
+- include_tasks: tasks/vhosts_cleaner.yml
 - include_tasks: php/php.yml
 - include_tasks: php/pecl.yml
 - include_tasks: php/pear.yml

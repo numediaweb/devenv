@@ -1,0 +1,7 @@
+- name: Clean previous enabled Apache virtual hosts
+  shell: rm -rf /etc/apache2/sites-enabled/*.*
+  become: yes
+
+- name: Clean previous available Apache virtual hosts
+  shell: rm -rf /etc/apache2/sites-available/*.*
+  become: yes
