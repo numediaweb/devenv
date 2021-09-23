@@ -125,7 +125,7 @@ PLEASE USE [THIS TUTORIAL](https://numediaweb.com/install-ssl-tls-development-ma
 
 1. From the root of the devenv, run this command:
 ```
-openssl req -x509 -config ansible/roles/apache/files/openssl-ca.cnf -newkey rsa:4096 -sha256 -nodes -out ansible/roles/apache/files/root_certificate_authority.pem -outform PEM && mv cakey.pem ansible/roles/apache/files/ca_key.key
+openssl req -x509 -config ansible/roles/apache/files/openssl-ca.cnf -newkey rsa:4096 -sha256 -nodes -out ansible/roles/apache/files/root_certificate_authority.pem -outform PEM -days 1825 && mv cakey.pem ansible/roles/apache/files/ca_key.key
 ```
 This dev environement expects the generated certificate to be copied to  [ansible/roles/apache/files/root_certificate_authority.pem](ansible/roles/apache/files/root_certificate_authority.pem) in order to trust the hosts from dev environement.
 
