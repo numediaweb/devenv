@@ -95,7 +95,7 @@ The `vhosts` parameter accepts the following:
 * `directory`: the directory path that will be used as a DocumentRoot in Apache conf file (example: `/var/www/my-project-folder`). This is required for projects using `none` or `rails` framework: for the other frameworks the `projectFolder` will be used instead if no `directory` is specified.
 * `host`: the host name that you want to give for this project in the format `my-project.dev`
 * `framework`: this defines how the virtual host will be setup in Apache. Currently we support those options: `symfony` for Symfony 3 projects, `laravel` for Laravel projects, `none` for other non custom projects, `rails` for Rails applications. 
-* `frameworkVersion`: this is used now for Symfony projects as Symfony 3 is different than Symfony 4. Default is 3.
+* `frameworkVersion`: this is used now for Symfony projects as Symfony 3 web folder is different than newer Symfony 4/5. Default is newer `public` folder.
 * `alias`: optional alias to easily cd to the project folder in the virtual machine using cd-myalias form.
 * `ssl`: by defaut all hosts have SSL, set it to `false` to disable SSL on the virtual host.
 

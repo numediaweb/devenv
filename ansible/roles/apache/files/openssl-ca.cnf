@@ -39,13 +39,13 @@ localityName = Locality Name (eg, city)
 localityName_default = Berlin
 
 organizationName = Organization Name (eg, company)
-organizationName_default = Numediaweb Devenv
+organizationName_default = Numediaweb
 
 organizationalUnitName = Organizational Unit (eg, division)
 organizationalUnitName_default = Server Research Department
 
 commonName = Common Name (e.g. server FQDN or YOUR name)
-commonName_default = Numediaweb Devenv
+commonName_default = DEVENV
 
 emailAddress = Email Address
 emailAddress_default = almo@numediaweb.com
