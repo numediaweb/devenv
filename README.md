@@ -144,6 +144,11 @@ You can always check a dev domain's certificate using for example: `sudo openssl
 * Add the previously generated [ansible/roles/apache/files/root_certificate_authority.pem](ansible/roles/apache/files/root_certificate_authority.pem) certificate to the `login` keychain not the System keychain. But if you want to trust the certificates for others users of the mac you should add it to System keychain.
 * In the Keychain Access search for the certificate you have just added and double click on it to open and choose “Always Trust,” and type your OSX user password.
 
+Tip:
+```
+sudo security add-trusted-cert -d -r trustRoot -k "/Library/Keychains/System.keychain" root_certificate_authority.pem
+```
+
 ### Install for Google Chrome on Windows
 
 * Use Chrome's Settings -> show advanced settings -> Manage Certificates -> Import.
