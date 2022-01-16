@@ -95,7 +95,7 @@ The `vhosts` parameter accepts the following:
 * `directory`: the directory path that will be used as a DocumentRoot in Apache conf file (example: `/var/www/my-project-folder`). This is required for projects using `none` or `rails` framework: for the other frameworks the `projectFolder` will be used instead if no `directory` is specified.
 * `host`: the host name that you want to give for this project in the format `my-project.dev`
 * `framework`: this defines how the virtual host will be setup in Apache. Currently we support those options: `symfony` for Symfony 3 projects, `laravel` for Laravel projects, `none` for other non custom projects, `rails` for Rails applications. 
-* `frameworkVersion`: this is used now for Symfony projects as Symfony 3 is different than Symfony 4. Default is 3.
+* `frameworkVersion`: this is used now for Symfony projects as Symfony 3 web folder is different than newer Symfony 4/5. Default is newer `public` folder.
 * `alias`: optional alias to easily cd to the project folder in the virtual machine using cd-myalias form.
 * `ssl`: by defaut all hosts have SSL, set it to `false` to disable SSL on the virtual host.
 
@@ -125,7 +125,7 @@ PLEASE USE [THIS TUTORIAL](https://numediaweb.com/install-ssl-tls-development-ma
 
 1. From the root of the devenv, run this command:
 ```
-openssl req -x509 -config ansible/roles/apache/files/openssl-ca.cnf -newkey rsa:4096 -sha256 -nodes -out ansible/roles/apache/files/root_certificate_authority.pem -outform PEM && mv cakey.pem ansible/roles/apache/files/ca_key.key
+openssl req -x509 -config ansible/roles/apache/files/openssl-ca.cnf -newkey rsa:4096 -sha256 -nodes -out ansible/roles/apache/files/root_certificate_authority.pem -outform PEM -days 1825 && mv cakey.pem ansible/roles/apache/files/ca_key.key
 ```
 This dev environement expects the generated certificate to be copied to  [ansible/roles/apache/files/root_certificate_authority.pem](ansible/roles/apache/files/root_certificate_authority.pem) in order to trust the hosts from dev environement.
 
@@ -143,6 +143,11 @@ You can always check a dev domain's certificate using for example: `sudo openssl
 
 * Add the previously generated [ansible/roles/apache/files/root_certificate_authority.pem](ansible/roles/apache/files/root_certificate_authority.pem) certificate to the `login` keychain not the System keychain. But if you want to trust the certificates for others users of the mac you should add it to System keychain.
 * In the Keychain Access search for the certificate you have just added and double click on it to open and choose “Always Trust,” and type your OSX user password.
+
+Tip:
+```
+sudo security add-trusted-cert -d -r trustRoot -k "/Library/Keychains/System.keychain" root_certificate_authority.pem
+```
 
 ### Install for Google Chrome on Windows
 

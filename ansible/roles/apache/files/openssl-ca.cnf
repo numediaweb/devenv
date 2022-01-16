@@ -39,16 +39,16 @@ localityName = Locality Name (eg, city)
 localityName_default = Berlin
 
 organizationName = Organization Name (eg, company)
-organizationName_default = DEVENV CA, Limited
+organizationName_default = Numediaweb
 
 organizationalUnitName = Organizational Unit (eg, division)
 organizationalUnitName_default = Server Research Department
 
 commonName = Common Name (e.g. server FQDN or YOUR name)
-commonName_default = DEVENV CA
+commonName_default = DEVENV
 
 emailAddress = Email Address
-emailAddress_default = test@mydomain.dev
+emailAddress_default = almo@numediaweb.com
 
 ####################################################################
 [ ca_extensions ]

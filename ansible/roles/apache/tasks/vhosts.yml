@@ -4,7 +4,7 @@
   with_items: "{{params['vhosts']}}"
   when: item.framework == "symfony"
 
-- name: List available Symfony 4 project folders
+- name: List available Symfony 4/5 project folders
   stat: path=/var/www/{{item.projectFolder}}/public
   register: symfony_4_projects
   with_items: "{{params['vhosts']}}"

@@ -19,6 +19,7 @@
   become: yes
 
 # generate your own: https://deliciousbrains.com/ssl-certificate-authority-for-local-https-development/
+# openssl req -x509 -new -nodes -key ca_key.key -sha256 -days 1825 -subj "/C=DE/ST=Berlin/L=Berlin/O=Numediaweb/CN=Numediaweb Devenv" -out root_certificate_authority.pem
 - name: Copy CA certificate and CA private key
   copy:
     src: "{{ item }}"

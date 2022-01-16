@@ -1,10 +1,10 @@
 {# Set up project folder #}
 {% if item.item.directory is defined | default(false) %}
     {% set DocumentRoot = item.item.directory %}
-{% elif item.item.frameworkVersion is defined and item.item.frameworkVersion == 4 | default(false) %}
-    {% set DocumentRoot = "/var/www/" ~ item.item.projectFolder ~ "/public" %}
-{% else %}
+{% elif item.item.frameworkVersion is defined and item.item.frameworkVersion == 3 | default(false) %}
     {% set DocumentRoot = "/var/www/" ~ item.item.projectFolder ~ "/web" %}
+{% else %}
+    {% set DocumentRoot = "/var/www/" ~ item.item.projectFolder ~ "/public" %}
 {% endif %}
 
 {# Set up VirtualHosts #}
@@ -13,18 +13,7 @@
 
     SetEnv SYMFONY_ENV dev
 
-    {% if item.item.frameworkVersion is defined and item.item.frameworkVersion == 4 | default(false) %}
-        DocumentRoot {{ DocumentRoot }}
-        <Directory {{ DocumentRoot }}>
-            AllowOverride None
-            Order Allow,Deny
-            Allow from All
-
-            DirectoryIndex /index.php
-            FallbackResource /index.php
-        </Directory>
-    {% else %}
-
+    {% if item.item.frameworkVersion is defined and item.item.frameworkVersion == 3 | default(false) %}
     DocumentRoot {{ DocumentRoot }}
     <Directory {{ DocumentRoot }}>
         AllowOverride None
@@ -52,6 +41,16 @@
             RewriteEngine Off
         </IfModule>
     </Directory>
+    {% else %}
+        DocumentRoot {{ DocumentRoot }}
+        <Directory {{ DocumentRoot }}>
+            AllowOverride None
+            Order Allow,Deny
+            Allow from All
+
+            DirectoryIndex /index.php
+            FallbackResource /index.php
+        </Directory>
 
         {% endif %}
 
@@ -71,19 +70,7 @@
         SSLCertificateFile /etc/apache2/ssl/{{ item.item.host }}.crt
         SSLCertificateKeyFile /etc/apache2/ssl/{{ item.item.host }}.key
 
-        {% if item.item.frameworkVersion is defined and item.item.frameworkVersion == 4 | default(false) %}
-        DocumentRoot {{ DocumentRoot }}
-        <Directory {{ DocumentRoot }}>
-            AllowOverride None
-            Order Allow,Deny
-            Allow from All
-
-            DirectoryIndex /index.php
-            FallbackResource /index.php
-        </Directory>
-
-        {% else %}
-
+        {% if item.item.frameworkVersion is defined and item.item.frameworkVersion == 3 | default(false) %}
         DocumentRoot {{ DocumentRoot }}
         <Directory {{ DocumentRoot }}>
             AllowOverride None
@@ -111,7 +98,16 @@
                 RewriteEngine Off
             </IfModule>
         </Directory>
+        {% else %}
+        DocumentRoot {{ DocumentRoot }}
+        <Directory {{ DocumentRoot }}>
+            AllowOverride None
+            Order Allow,Deny
+            Allow from All
 
+            DirectoryIndex /index.php
+            FallbackResource /index.php
+        </Directory>
         {% endif %}
 
         ErrorLog ${APACHE_LOG_DIR}/{{ item.item.host }}_error.log
