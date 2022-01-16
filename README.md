@@ -112,7 +112,7 @@ The IP corresponds to the `vm_ip` inside the config.
  or
  sudo nano /etc/hosts
 
-192.168.33.12 my-project.dev
+192.168.56.12 my-project.dev
 ```
  
 Notes about the `ERR_ICANN_NAME_COLLISION` bug on Windows; if you see this error on your Chrome browser, try to edit the hosts file and put the problematic address on a new line!

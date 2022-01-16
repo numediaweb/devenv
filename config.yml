@@ -1,6 +1,6 @@
 # available versions: 5.6, 7.4, 8.0
 php_version: 7.4
-vm_ip: 192.168.33.12
+vm_ip: 192.168.56.12
 vm_cpus: 4
 vm_memory: 4096
 vm_disksize: '10GB'
