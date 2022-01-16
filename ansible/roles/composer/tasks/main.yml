@@ -15,10 +15,6 @@
   register: composer_installer_signature
   when: not composer_bin.stat.exists
 
-#- name: Debug
-#  debug:
-#    msg: "Exists composer_bin.stat.exists: {{ composer_bin.stat.exists }}"
-
 - name: Download Composer installer.
   get_url:
     url: https://getcomposer.org/installer
@@ -38,11 +34,10 @@
     mv /tmp/composer.phar {{ composer_path }}
     creates={{ composer_path }}
   when: not composer_bin.stat.exists
-  become: true
 
 - name: Update Composer to latest version (if configured).
   command: >
-    composer self-update {{ composer_version_branch }}
+    {{ php_executable }} {{ composer_path }} self-update {{ composer_version_branch }}
   register: composer_update
   changed_when: "'Updating to version' in composer_update.stdout"
   when: composer_keep_updated | bool
