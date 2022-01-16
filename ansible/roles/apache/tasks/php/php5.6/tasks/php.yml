@@ -9,6 +9,7 @@
 - name: php - install base packages
   apt:
     name: ['libapache2-mod-php5.6',
+        'php5.6-apcu',
         'php5.6-common',
         'php5.6-cli',
         'php5.6-fpm',
