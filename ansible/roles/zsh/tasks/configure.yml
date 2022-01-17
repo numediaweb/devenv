@@ -11,6 +11,10 @@
   set_fact:
     zsh_version: "{{ zsh_register_version.stdout }}"
 
+- name: Debug ZSH version
+  debug:
+    msg: "Version of ZSH is: {{ zsh_version }}"
+
 - name: Merge bundles lists
   set_fact:
     zsh_antigen_bundles: "{{ zsh_antigen_bundles }} + {{ zsh_antigen_bundles_extras }}"

@@ -6,11 +6,12 @@ zsh_user: "{{ ansible_user_id }}"
 zsh_hist_stamps: yyyy-mm-dd
 zsh_share_history: no
 zsh_update_interval: 30 # set 0 for disable autoupdates
-zsh_editor: vim
+zsh_editor: # mcedit
 zsh_term: xterm-256color
 zsh_mc_solarized_skin: no
 
 zsh_path:
+  - "{{ zsh_fzf_path }}"
   - /usr/local/sbin
   - /usr/local/bin
   - /usr/sbin
@@ -20,10 +21,12 @@ zsh_path:
   - /usr/games
   - /usr/local/games
 
+zsh_load_etc_profile: yes
+
 fzf_widgets: ytet5uy4/fzf-widgets
 
 zsh_antigen_version: master
-zsh_fzf_version: 0.17.4
+zsh_fzf_version: 0.28.0
 
 zsh_antigen_bundles:
   - { name: command-not-found, when: "{{ ansible_os_family != 'Darwin' }}" } # too slow on OSX
@@ -34,8 +37,10 @@ zsh_antigen_bundles:
   - git-extras
   - gnu-utils
   - { name: httpie, command: http }
-  - { name: go, command: go }
+  - { name: golang, command: go }
   - { name: gulp, command: gulp }
+  - { name: helm, command: helm }
+  - { name: kubectl, command: kubectl }
   - { name: pip, command: pip }
   - { name: rake, command: rake }
   - { name: symfony2, command: symfony }
@@ -43,29 +48,28 @@ zsh_antigen_bundles:
   - python
   - { name: tmux, command: tmux }
   - { name: vagrant, command: vagrant }
-  - { name: viasite/drall, command: drall }
-  - { name: viasite/drupal-scripts, command: drs }
   - { name: viasite/server-scripts, command: dbdump }
-  - { name: viasite-ansible/zsh-ansible-server, command: ansible-deploy }
-  - zsh_reload
 
   # on zsh 4.3.10 autosuggestions breaks multiline commands with \
-  - { name: zsh-users/zsh-autosuggestions, when: "{{ zsh_version | default(false) | version('5.0', '>=') }}" }
+  - { name: zsh-users/zsh-autosuggestions, when: "{{ zsh_version is version_compare('5.0', '>=') }}" }
   - popstas/zsh-command-time
   - { name: unixorn/autoupdate-antigen.zshplugin, when: "{{ zsh_update_interval > 0 }}" }
   - urbainvaes/fzf-marks # replaces jump plugin, mark, jump and Ctrl+G
   - "{{ fzf_widgets }}"
   # must be last, don't work on zsh < 4.3.17
-  #- { name: zsh-users/zsh-syntax-highlighting, when: "{{ zsh_version | default(false) | version('4.3.17', '>=') }}" }
-  # bug with text paste in fast-syntax-highlighting v1.21, see https://github.com/zdharma/fast-syntax-highlighting/issues/30
-  - { name: zdharma/fast-syntax-highlighting@v1.2, when: "{{ zsh_version | default(false) | version('4.3.17', '>=') }}" }
+  #- { name: zsh-users/zsh-syntax-highlighting, when: "{{ zsh_version | default(false) is version_compare('4.3.17', '>=') }}" }
+  - { name: zdharma-continuum/fast-syntax-highlighting, when: "{{ zsh_version is version_compare('4.3.17', '>=') }}" }
 
 zsh_antigen_bundles_extras: []
 
+zsh_custom_before: '' # any code before include ~/.zshrc.local
+zsh_custom_after: '' # any code before include ~/.zshrc.local
+
 # useful for deploy many zsh users at host, without duplicate and without write access
 zsh_shared: no
+zsh_change_user_shell: yes
 
-zsh_antigen_theme: "bhilburn/powerlevel9k powerlevel9k"
+zsh_antigen_theme: "romkatv/powerlevel10k powerlevel10k"
 
 zsh_hotkeys:
   # home & end keys work
@@ -129,6 +133,7 @@ zsh_autosuggestions_bind_key: ""
 zsh_autosuggestions_bind_key_2: ""
 
 # fzf
+zsh_fzf_path: "$HOME/bin"
 zsh_fzf_height: "100%"
 zsh_fzf_reverse: yes
 zsh_fzf_border: no
@@ -170,6 +175,10 @@ zsh_powerlevel9k_context_root_foreground: "255" # white
 zsh_powerlevel9k_context_root_background: "124" # red
 zsh_powerlevel9k_dir_foreground: "255" # white
 zsh_powerlevel9k_dir_background: "240" # gray
+zsh_powerlevel9k_dir_etc_foreground: "{{ zsh_powerlevel9k_dir_foreground }}"
+zsh_powerlevel9k_dir_etc_background: "{{ zsh_powerlevel9k_dir_background }}"
+zsh_powerlevel9k_dir_path_highlight_foreground: "{{ zsh_powerlevel9k_dir_foreground }}"
+zsh_powerlevel9k_dir_path_highlight_background: "{{ zsh_powerlevel9k_dir_background }}"
 
 # vcs colors
 zsh_powerlevel9k_vcs_foreground: "232" # about black on any palette
@@ -180,3 +189,6 @@ zsh_powerlevel9k_vcs_untracked_background: "094" # orange
 # command execution time
 zsh_powerlevel9k_command_execution_time_foreground: "000"
 zsh_powerlevel9k_command_execution_time_background: "248"
+
+# powerlevel10k
+zsh_powerlevel10k_instant_prompt: no
