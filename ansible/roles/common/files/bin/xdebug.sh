@@ -4,6 +4,10 @@ XDEBUG_INI_PATH_MODS="/etc/php/$PHP_VERSION/mods-available/20-xdebug.ini"
 XDEBUG_INI_PATH_CLI="/etc/php/$PHP_VERSION/cli/conf.d/20-xdebug.ini"
 XDEBUG_INI_PATH_APACHE="/etc/php/$PHP_VERSION/apache2/conf.d/20-xdebug.ini"
 
+# php 5.6
+#  /etc/php/5.6/apache2/conf.d/20-xdebug.ini,
+
+
 function turn_off {
 sudo sed -i 's/^zend_extension/;zend_extension/g' ${XDEBUG_INI_PATH_MODS};
 sudo sed -i 's/^zend_extension/;zend_extension/g' ${XDEBUG_INI_PATH_CLI};
