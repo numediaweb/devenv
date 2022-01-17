@@ -1,3 +1,0 @@
----
-- name: Compass: Install ruby-compass
-  apt: pkg=ruby-compass state=present update_cache=yes cache_valid_time=3600

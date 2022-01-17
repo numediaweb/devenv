@@ -1,5 +1,0 @@
----
-- name: Install gulp globally
-  npm: name=gulp-cli global=yes
-  become: yes
-  become_method: sudo

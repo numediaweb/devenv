@@ -1,4 +1,0 @@
----
-- name: Grunt => Install grunt globally
-  npm: name=grunt-cli global=yes
-  become: yes

@@ -1,9 +1,0 @@
----
-- name: Compass => Configure os
-  set_fact:
-    server_base_os: "{{ansible_distribution|lower}}{{ansible_distribution_major_version|int}}"
-
-# setup os
-
-- name: Compass => setup {{server_base_os}}
-  include_tasks: "{{server_base_os}}.yml"

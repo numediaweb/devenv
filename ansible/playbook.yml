@@ -26,12 +26,6 @@
     - { role: apache, when: "'apache' in roles_enabled" }
     - { role: mysql, when: "'mysql' in roles_enabled" }
     - { role: composer, when: "'composer' in roles_enabled" }
-    - { role: nodejs, when: "'nodejs' in roles_enabled" }
-    - { role: grunt, when: "'grunt' in roles_enabled" }
-    - { role: bower, when: "'bower' in roles_enabled" }
-    - { role: compass, when: "'compass' in roles_enabled" }
-    - { role: gulp, when: "'gulp' in roles_enabled" }
-    - { role: angular_cli, when: "'angular_cli' in roles_enabled" }
     - { role: rbenv, when: "'rbenv' in roles_enabled" }
     - { role: rails, when: "'rails' in roles_enabled" }
     - { role: redis, when: "'redis' in roles_enabled" }
@@ -43,6 +37,5 @@
     - { role: beanstalkd, when: "'beanstalkd' in roles_enabled" }
     - { role: maven, when: "'maven' in roles_enabled" }
     - { role: varnish, when: "'varnish' in roles_enabled" }
-    - { role: yarn, when: "'yarn' in roles_enabled" }
     - { role: wkhtmltopdf, when: "'wkhtmltopdf' in roles_enabled" }
     - { role: sftp, when: "'sftp' in roles_enabled" }
