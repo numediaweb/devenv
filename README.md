@@ -359,11 +359,6 @@ Use this settings to login to the devenv sftp server:
 
 ZSH is a terminal that can pratically predict what you want to type, save a lot of repetitive commands, give you a really powerful autocomplete. Based on [ansible-role-zsh](https://github.com/viasite-ansible/ansible-role-zsh)
 
-
-## Known issues
-- composer is running sometimes into a memory limit: https://getcomposer.org/doc/articles/troubleshooting.md#memory-limit-errors
-- deep merge of variable coming from config-custom.yml doesn't seem to work properly
-
 ## Troubleshooting Vagrant/Ansible errors
 
 ### ERROR: Module mpm_event is enabled - cannot proceed due to conflicts
@@ -406,6 +401,34 @@ vagrant up --provision
 ```
 
 ### Memory issues
+
+### No disk space left
+
+* Remove not needed websites from the root directory. 
+* Delete Apache logs: `sudo find /var/log/apache2/ -name '*.log' -delete`
+* You can also remove uneeded files only and keep the websites.
+* Delete not needed databases. Use `select @@datadir;` MySQL query to find where the data is stored: normally inside `/var/lib/mysql/` directory.
+* `sudo dpkg -l 'linux-*' | sed '/^ii/!d;/'"$(uname -r | sed "s/\(.*\)-\([^0-9]\+\)/\1/")"'/d;s/^[^ ]* [^ ]* \([^ ]*\).*/\1/;/[0-9]/!d' | xargs sudo apt-get -y purge`
+* `sudo rm /var/log/*.gz`
+* `sudo du --max-depth=1 --human-readable /var | sort --human-numeric-sort`
+
+#### Large Databases
+
+use this query to list the size of every table in every database, largest first:
+```mysql
+SELECT 
+     table_schema as `Database`, 
+     table_name AS `Table`, 
+     round(((data_length + index_length) / 1024 / 1024), 2) `Size in MB` 
+FROM information_schema.TABLES 
+ORDER BY (data_length + index_length) DESC;
+```
+
+
+### composer
+
+composer is running sometimes into a memory limit: https://getcomposer.org/doc/articles/troubleshooting.md#memory-limit-errors
+
 Run `enable_swap` command
 
 ### 'apache2/envvars does not exist' on ubuntu host

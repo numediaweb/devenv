@@ -27,6 +27,7 @@
         'php5.6-mcrypt',
         'php5.6-bcmath',
         'php5.6-soap',
+        'php5.6-memcache',
         'php5.6-opcache']
     state: "present"
   become: yes

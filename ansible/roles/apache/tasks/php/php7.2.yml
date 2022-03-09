@@ -24,7 +24,7 @@
     state: present
   become: yes
 
-- name: Copy pre-compiled 8.0 Pecl extensions
+- name: Copy pre-compiled 7.2 Pecl extensions
   copy: src={{ item }} dest=/usr/lib/php/20200930  mode=755
   with_fileglob:
     - 20170718/*
