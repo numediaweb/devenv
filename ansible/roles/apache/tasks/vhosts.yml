@@ -10,7 +10,7 @@
   with_items: "{{params['vhosts']}}"
   when: item.framework == "symfony"
 
-- name: Merge Symfony 3 & 4 projects
+- name: Merge Symfony 3, 4 & 5 projects
   set_fact:
     symfony_projects: "{{symfony_3_projects.results}} + {{symfony_4_projects.results }}"
 
@@ -22,7 +22,7 @@
     - apache-restart
   become: yes
   with_items: "{{ symfony_projects }}"
-  when: item.stat is defined and item.stat.exists == true
+  when: item.stat is defined and item.stat.exists == True
 
 - name: List available Laravel project folders
   stat: path=/var/www/{{item.projectFolder}}

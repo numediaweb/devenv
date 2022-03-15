@@ -13,7 +13,7 @@
 
     SetEnv SYMFONY_ENV dev
 
-    {% if item.item.frameworkVersion is defined and item.item.frameworkVersion == 3 | default(false) %}
+    {% if item.item.frameworkVersion is defined and item.item.frameworkVersion in [3,4,5,6] | default(false) %}
     DocumentRoot {{ DocumentRoot }}
     <Directory {{ DocumentRoot }}>
         AllowOverride None
