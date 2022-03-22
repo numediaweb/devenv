@@ -3,7 +3,7 @@ php_version: 8.0
 vm_ip: 192.168.56.12
 vm_cpus: 4
 vm_memory: 4096
-vm_disksize: '10GB'
+vm_disksize: '20GB'
 roles:
   - common
   - zsh
