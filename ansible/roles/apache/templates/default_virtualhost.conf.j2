@@ -17,7 +17,6 @@
     CustomLog ${APACHE_LOG_DIR}/{{ item.item.host }}_access.log combined
 </VirtualHost>
 
-
 {# Set up SSL VirtualHosts #}
 {% if item.item.ssl | default(true) %}
 <VirtualHost *:443>
