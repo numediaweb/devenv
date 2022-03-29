@@ -84,7 +84,7 @@
   ignore_errors: yes
 
 - name: Load Xdebug extension
-  template: src=xdebug.ini.j2 dest=/etc/php/{{ item.phpversion }}/{{ item.sapi }}/20-xdebug.ini
+  template: src=xdebug-v3.ini.j2 dest=/etc/php/{{ item.phpversion }}/{{ item.sapi }}/20-xdebug.ini
   with_items:
     - { sapi: 'cli/conf.d', phpversion: "{{params['php_version']}}"}
     - { sapi: 'apache2/conf.d', phpversion: "{{params['php_version']}}"}
