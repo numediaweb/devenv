@@ -38,8 +38,6 @@ Vagrant.configure("2") do |config|
 
     # Machine hardware config
 	config.vm.provider :virtualbox do |vb|
-		# fixes issues with MacOs Monterey
-		vb.gui = true
 		vb.customize ["modifyvm", :id, "--cpus", parameters['vm_cpus']]
 		vb.customize ["modifyvm", :id, "--ioapic", "on"]
 		vb.customize ["modifyvm", :id, "--memory", parameters['vm_memory']]
