@@ -1,16 +1,20 @@
 ---
 
+- name: Update package cache
+  package:
+    update_cache: yes
+  become: yes
+  when: ansible_os_family != 'Darwin'
+
 - name: Install zsh, git, wget
   package:
-    name: "{{ item }}"
+    name:
+      - zsh
+      - git
+      - wget
     state: present
-  with_items:
-    - zsh
-    - git
-    - wget
   # brew don't work from root user on macOS
   when: not (zsh_user == 'root' and ansible_os_family == 'Darwin')
-  become: yes
 
 - name: Clone antigen {{ zsh_antigen_version }}
   git:
@@ -39,14 +43,33 @@
   check_mode: no
   register: zsh_register_fzf_command
 
-- name: Download fzf
+- name: Set zsh_fzf_path to /usr/local/bin
+  set_fact:
+    zsh_fzf_path: /usr/local/bin
+  changed_when: false
+  when: zsh_shared
+
+- name: Set zsh_fzf_path_absolute
+  set_fact:
+    zsh_fzf_path_absolute: "{{ zsh_fzf_path | replace('$HOME', '~' + zsh_user) }}"
+  changed_when: false
+
+- name: Ensure users home binary folder is present
+  file:
+    path: "{{ zsh_fzf_path_absolute }}"
+    owner: "{{ zsh_user }}"
+    group: "{{ zsh_user_group }}"
+    mode: u=rwx,g=rwx,o=rx
+    state: directory
+  when: not zsh_shared
+
+- name: "Download fzf to {{ zsh_fzf_path_absolute }}"
   unarchive:
     src: "{{ zsh_fzf_url }}"
-    dest: /usr/local/bin
+    dest: "{{ zsh_fzf_path_absolute }}"
     remote_src: yes
-    creates: /usr/local/bin/fzf
+    creates: "{{ zsh_fzf_path_absolute }}/fzf"
   when: zsh_register_fzf_command.rc == 1
-  become: yes
 
 - name: Set directory permissions
   file:

@@ -3,8 +3,20 @@
 # antigen version: {{ zsh_antigen_installed_version }}
 
 export TERM="{{ zsh_term }}"
-export EDITOR="{{ zsh_editor }}"
-export PATH="{{ zsh_path | join(":") }}"
+{% if zsh_editor %}export EDITOR="{{ zsh_editor }}"
+{% endif %}export PATH="$PATH:{{ zsh_path | join(":") }}"
+
+{% if zsh_antigen_theme == "romkatv/powerlevel10k powerlevel10k" and zsh_powerlevel10k_instant_prompt %}
+# user configs
+[[ -r "$HOME/.zshrc.local.pre-p10k" ]] && source "$HOME/.zshrc.local.pre-p10k"
+
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+{% endif %}
 
 HIST_STAMPS="{{ zsh_hist_stamps }}"
 UPDATE_ZSH_DAYS="{{ zsh_update_interval }}"
@@ -21,6 +33,10 @@ ANTIGEN_PLUGIN_UPDATE_DAYS="{{ zsh_update_interval }}"
 ANTIGEN_SYSTEM_UPDATE_DAYS="{{ zsh_update_interval }}"
 
 {% if zsh_mc_solarized_skin %}export MC_SKIN="$HOME/.mc/lib/mc-solarized/solarized.ini"{% endif %}
+
+
+{% if zsh_custom_before %}# Custom configs zsh_custom_before
+{{ zsh_custom_before }}{% endif %}
 
 source "{{ zsh_antigen_path_compat }}/antigen/antigen.zsh"
 
@@ -62,11 +78,7 @@ antigen bundle {{ bundle }}
 {% endif %}
 {% endfor %}
 
-{% if zsh_antigen_installed_version | version('2.0', '>=') %}
 POWERLEVEL9K_INSTALLATION_PATH=$ANTIGEN_BUNDLES/bhilburn/powerlevel9k/powerlevel9k.zsh-theme
-{% elif zsh_version | version('5.0.8', '<') %}
-POWERLEVEL9K_INSTALLATION_PATH={{ zsh_antigen_path_compat }}/repos/https-COLON--SLASH--SLASH-github.com-SLASH-bhilburn-SLASH-powerlevel9k.git
-{% endif %}
 
 antigen theme {{ zsh_antigen_theme }}
 
@@ -101,7 +113,7 @@ export FZF_TMUX=0
 export FZF_DEFAULT_OPTS="{{ zsh_fzf_default_opts }}"
 
 # fzf-widgets: fzf-change-reset-dir
-{% if zsh_version | version('5.0', '>=') -%}
+{% if zsh_version is version_compare('5.0', '>=') -%}
 autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
 add-zsh-hook chpwd chpwd_recent_dirs
 {% endif %}
@@ -152,6 +164,10 @@ POWERLEVEL9K_DIR_HOME_FOREGROUND="{{ zsh_powerlevel9k_dir_foreground }}"
 POWERLEVEL9K_DIR_HOME_BACKGROUND="{{ zsh_powerlevel9k_dir_background }}"
 POWERLEVEL9K_DIR_HOME_SUBFOLDER_FOREGROUND="{{ zsh_powerlevel9k_dir_foreground }}"
 POWERLEVEL9K_DIR_HOME_SUBFOLDER_BACKGROUND="{{ zsh_powerlevel9k_dir_background }}"
+POWERLEVEL9K_DIR_ETC_FOREGROUND="{{ zsh_powerlevel9k_dir_etc_foreground }}"
+POWERLEVEL9K_DIR_ETC_BACKGROUND="{{ zsh_powerlevel9k_dir_etc_background }}"
+POWERLEVEL9K_DIR_PATH_HIGHLIGHT_FOREGROUND="{{ zsh_powerlevel9k_dir_path_highlight_foreground }}"
+POWERLEVEL9K_DIR_PATH_HIGHLIGHT_BACKGROUND="{{ zsh_powerlevel9k_dir_path_highlight_background }}"
 
 POWERLEVEL9K_VCS_CLEAN_BACKGROUND="{{ zsh_powerlevel9k_vcs_clean_background }}"
 POWERLEVEL9K_VCS_MODIFIED_BACKGROUND="{{ zsh_powerlevel9k_vcs_modified_background }}"
@@ -163,9 +179,17 @@ POWERLEVEL9K_VCS_UNTRACKED_FOREGROUND="{{ zsh_powerlevel9k_vcs_foreground }}"
 POWERLEVEL9K_COMMAND_EXECUTION_TIME_FOREGROUND="{{ zsh_powerlevel9k_command_execution_time_foreground }}"
 POWERLEVEL9K_COMMAND_EXECUTION_TIME_BACKGROUND="{{ zsh_powerlevel9k_command_execution_time_background }}"
 
-# Aliases
-alias suser='su -'
+{% if zsh_load_etc_profile %}source /etc/profile{% endif %}
+
+
+{% if zsh_custom_after %}# Custom configs zsh_custom_after
+{{ zsh_custom_after }}{% endif %}
 
 # user configs
 [[ -r /etc/zsh/zshrc.local ]] && source /etc/zsh/zshrc.local
 [[ -r "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
+
+{% if zsh_antigen_theme == "romkatv/powerlevel10k powerlevel10k" %}
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+{% endif %}
