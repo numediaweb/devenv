@@ -25,6 +25,7 @@ Installed dependencies can be found in [config.yml -> roles](config.yml).
   * [Varnish](#varnish)
   * [Ruby via rbenv](#ruby-via-rbenv)
   * [Vagrant share](#vagrant-share)
+  * [RabbitMQ](#rabbitmq)
   * [Utilities](#utilities)
     * [Mailcatcher](#mailcatcher)
       * [Use in Laravel](#use-in-laravel)
@@ -34,7 +35,6 @@ Installed dependencies can be found in [config.yml -> roles](config.yml).
     * [bench](#bench)
     * [Blackfire](#blackfire)
     * [Upstart jobs](#upstart-jobs)
-    * [RabbitMQ](#rabbitmq)
     * [SSH tunnel](#ssh-tunnel)
     * [vagrant-fsnotify](#vagrant-fsnotify)
     * [SFTP server](#sftp-server)
@@ -229,6 +229,19 @@ Then add `ServerAlias`:
     ServerAlias bulky-mink-2323.vagrantshare.com
 ```
 
+## RabbitMQ
+RabbitMQ is a message broker system which allows you to write messages to an exchange with one process, called the producer, and then read back from the queue with another process, called the consumer.
+
+Access the RabbitMQ admin panel [http://192.168.33.12:15672/](http://192.168.33.12:15672/) (The IP corresponds to the `vm_ip` inside the config) using username `test` with password `test`.
+
+The log files will be saved in `/var/log/rabbitmq/rabbit@example-devenv.log`.
+
+An environment variables file define ports, file locations, names. To add configuration file for rabbitMq, edit this file (or create it if not existing): `/etc/rabbitmq/rabbitmq.config`
+A configuration file defines component settings for permissions, limits and clusters, and also for plugins. To add environement variables for rabbitMq, edit this file (or create it if not existing): `/etc/rabbitmq/rabbitmq-env.conf`
+
+Restart it with: `service rabbitmq-server restart`
+Check status with: `rabbitmqctl status`
+
 ## Utilities
 
 ### Mailcatcher
@@ -290,18 +303,6 @@ vagrant ssh
 sudo service voe-frontend stop
 sudo service voe-frontend start
 ```
-### RabbitMQ
-RabbitMQ is a message broker system which allows you to write messages to an exchange with one process, called the producer, and then read back from the queue with another process, called the consumer.
-
-Access the RabbitMQ admin panel [http://192.168.33.12:15672/](http://192.168.33.12:15672/) (The IP corresponds to the `vm_ip` inside the config) using username `test` with password `test`.
-
-The log files will be saved in `/var/log/rabbitmq/rabbit@example-devenv.log`.
-
-An environment variables file define ports, file locations, names. To add configuration file for rabbitMq, edit this file (or create it if not existing): `/etc/rabbitmq/rabbitmq.config`
-A configuration file defines component settings for permissions, limits and clusters, and also for plugins. To add environement variables for rabbitMq, edit this file (or create it if not existing): `/etc/rabbitmq/rabbitmq-env.conf`
-
-Restart it with: `service rabbitmq-server restart`
-Check status with: `rabbitmqctl status`
 
 ### SSH tunnel
 Enable the `ssh_tunnel` role in the config to allow the VM to connect to an ssh tunnel. This is needed for the supdb access. 

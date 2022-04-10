@@ -77,3 +77,11 @@
 - name: Allow composer cache directory to be writable
   file: path=/home/vagrant/.composer owner=vagrant state=directory recurse=yes
   become: yes
+
+- name: Set timezone variables
+  copy: content='Europe/Berlin'
+        dest=/etc/timezone
+        owner=root
+        group=root
+        mode=0644
+        backup=yes
