@@ -64,6 +64,8 @@
       - php8.0-bz2
       - php8.0-soap
       - php8.0-gmp
+      - php8.0-amqp
+      - php8.0-ldap
     state: present
   notify: apache-restart
   become: yes
