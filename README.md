@@ -179,7 +179,7 @@ Let's say you want to debug the project named `example` that uses `example.dev` 
 
 ### Xdebug and RabbitMQ consumer commands
 
-Running `c rabbitmq:consumer -m 100 work_queue_consume` doesn't triger xdebug in the IDE. To make PhpStorm aware of the connection you need to prefix the command with the environement variable: `PHP_IDE_CONFIG="serverName=aggregate-reviews.dev" c rabbitmq:consumer -m 100 work_queue_consume`
+Running `c rabbitmq:consumer -m 100 work_queue_consume` doesn't triger xdebug in the IDE. To make PhpStorm aware of the connection you need to prefix the command with the environement variable: `PHP_IDE_CONFIG="serverName=snfreports-mic.dev" php bin/console messenger:consume rabbit`
 
 ## Switching between PHP versions
 
@@ -246,10 +246,20 @@ Check status with: `rabbitmqctl status`
 
 ### Mailcatcher
 
-The dev environement contains [Mailcatcher](https://mailcatcher.me/) that runs a simple SMTP server which catches any message sent to it to display in a web interface. 
-Access the Mailcatcher web insterface using [http://192.168.33.12:1080/](http://192.168.33.12:1080/)
+Use instead mailtrap.io!
 
-If any issues you can start mailcatcher with: `mailcatcher --smtp-ip 192.168.33.12 --smtp-port 1025`
+Mailcatcher doesn't work correctly on Ubunto 20.04
+
+The dev environement contains [Mailcatcher](https://mailcatcher.me/) that runs a simple SMTP server which catches any message sent to it to display in a web interface. 
+
+Create a tunnel:
+```shell
+ssh -fNg -L 1180:localhost:1080 vagrant@192.168.56.12 -p 22 -i /Users/aidrissi/devenv/.vagrant/machines/default/virtualbox/private_key
+```
+
+Access the Mailcatcher web insterface using [http://127.0.0.1:1180/](http://127.0.0.1:1180/)
+
+If not started, ou can start mailcatcher with: `mailcatcher --smtp-ip 192.168.33.12 --smtp-port 1025`
 
 #### Use in Laravel
 Edit mail.php with: 
