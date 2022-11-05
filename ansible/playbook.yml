@@ -38,4 +38,5 @@
     - { role: varnish, when: "'varnish' in roles_enabled" }
     - { role: wkhtmltopdf, when: "'wkhtmltopdf' in roles_enabled" }
     - { role: sftp, when: "'sftp' in roles_enabled" }
+    - { role: mercure, when: "'mercure' in roles_enabled" }
     - { role: bashrc_alias, when: "'bashrc_alias' in roles_enabled" } # needs to be at the end as it is overwritten
