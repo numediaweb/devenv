@@ -1,4 +1,4 @@
-# Vagrant Development Environment
+# Vagrant Development Environment: DevEnv
 
 This Vagrant Setup provides you with a basic Ubuntu 18.04.2 LTS (Bionic Beaver) that contains everything that you needed to develop with PHP (multiple versions are availble and can be enabled in config: 5.6, 7.4, 8.0 or [switched to](#switching-between-php-versions) instantly). It contains the Apache2 Web Server, MySQL Server, Varnish, Redis as well as many common tools.
 
@@ -38,6 +38,7 @@ Installed dependencies can be found in [config.yml -> roles](config.yml).
     * [SSH tunnel](#ssh-tunnel)
     * [vagrant-fsnotify](#vagrant-fsnotify)
     * [SFTP server](#sftp-server)
+    * [ZSH shell](#zsh-shell)
   * [Known issues](#known-issues)
   * [Troubleshooting Vagrant/Ansible errors](#troubleshooting-vagrantansible-errors)
 
@@ -119,14 +120,27 @@ Notes about the `ERR_ICANN_NAME_COLLISION` bug on Windows; if you see this error
 
 ## SSL/TLS
 
-(This section needs an update!)
-
-PLEASE USE [THIS TUTORIAL](https://numediaweb.com/install-ssl-tls-development-machine/1516) TO GENERATE YOUR OWN CERTIFICATE AUTHORITY!
-
-1. From the root of the devenv, run this command:
+1. In your custom config file change the default password:
+```yaml
+ssl:
+    pass_phrase: "create a strong password"
 ```
-openssl req -x509 -config ansible/roles/apache/files/openssl-ca.cnf -newkey rsa:4096 -sha256 -nodes -out ansible/roles/apache/files/root_certificate_authority.pem -outform PEM -days 1825 && mv cakey.pem ansible/roles/apache/files/ca_key.key
+
+2. Go the the expected folder: `cd ansible/roles/apache/files/`.
+
+3. Generate a private key for the CA:
+```shell
+openssl genrsa -aes256 -out ca_key.key 4096
 ```
+
+4. Generate the X509 certificate for the CA:
+```shell
+openssl req -config openssl-ca.cnf \
+   -new -x509 -nodes \
+   -key ca_key.key \
+   -out root_certificate_authority.pem
+```
+
 This dev environement expects the generated certificate to be copied to  [ansible/roles/apache/files/root_certificate_authority.pem](ansible/roles/apache/files/root_certificate_authority.pem) in order to trust the hosts from dev environement.
 
 Due to Google Chrome [requiring ssl](https://goo.gl/5ZqJ8a) when using the .dev TLD: every host now has ssl by default.
@@ -134,6 +148,7 @@ If you want to disable ssl for any given host set it to `ssl: false` in the vhos
 ```
   - { projectFolder: "my-project-folder", host: "my-project.dev", framework: "symfony", alias: "myalias", ssl: false }
 ```
+
 Run `vagrant provision` to generate the certificates.
 
 

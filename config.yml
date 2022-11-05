@@ -70,7 +70,7 @@ ssl:
     country_name: "DE"
     state: "Berlin"
     locality: "Berlin"
-    organization: "Numediaweb"
+    organization: "DevEnv"
 
 varnish:
     package_name: "varnish"
@@ -107,3 +107,7 @@ varnish:
     #     backend: apache
     #   nodejs.example.com:
     #     backend: nodejs
+
+mercure:
+    mercure_rocks_jwt_key: "n2r5u8x!A%D*G-KaPdSgVkYp3s6v9y$B"
+    mercure_rocks_release: "0.9.0"
