@@ -1,3 +1,10 @@
+- name: Install ca package
+  apt:
+    name: ca-certificates
+    state: present
+    update_cache: yes
+  become: yes
+
 - name: Disable ssl module
   apache2_module:
     state: absent
@@ -60,3 +67,16 @@
     executable: "/bin/bash"
   with_items: "{{params['vhosts']}}"
   when: item.ssl|default(true)|bool == true
+
+#  It is important to have the .crt extension on the file, otherwise it will not be processed!
+- name: Installing our root CA certificate in the trust store
+  ansible.builtin.file:
+    src: /etc/apache2/ssl/root_certificate_authority.pem
+    dest: /usr/local/share/ca-certificates/root_certificate_authority.crt
+    owner: root
+    group: root
+    state: link
+    follow: False
+  notify:
+    - update-ca-certificates
+  become: yes

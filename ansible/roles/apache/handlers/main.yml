@@ -14,3 +14,7 @@
 - name: apache-stop
   service: name=apache2 state=stopped
   become: yes
+
+- name: update-ca-certificates
+  shell: /usr/sbin/update-ca-certificates
+  become: yes
