@@ -1,0 +1,102 @@
+---
+- include: preflight.yml
+
+# Create mercure user and group
+- name: create "{{ mercure_rocks_user }}" group
+  group:
+    name: "{{ mercure_rocks_user }}"
+    state: present
+  become: yes
+
+- name: create "{{ mercure_rocks_user }}" user
+  user:
+    name: "{{ mercure_rocks_user }}"
+    group: "{{ mercure_rocks_user }}"
+    state: present
+  become: yes
+
+# Mercure installation
+- name: Ensure mercure is installed
+  stat:
+    path: /etc/mercure/.installed_version
+  register: mercure_rocks_installed
+
+- name: Get installed version
+  command: "cat /etc/mercure/.installed_version"
+  register: mercure_rocks_installed_version
+  when: mercure_rocks_installed.stat.exists
+
+- name: Get latest release of a public repository
+  uri:
+    url: https://api.github.com/repos/dunglas/mercure/releases/latest
+    return_content: true
+  register: mercure_rocks_json_reponse
+  when: mercure_rocks_release is not defined
+
+- name: Extract version from latest public release
+  set_fact:
+    mercure_rocks_release: "{{ mercure_rocks_json_reponse.json.tag_name | regex_replace('^v(.*)$', '\\1') }}"
+  when: mercure_rocks_release is not defined
+
+- name: Create installation dir
+  file:
+    path: /opt/mercure
+    state: directory
+    mode: 0755
+  become: yes
+
+- name: Download and extract mercure archive into /opt/mercure
+  unarchive:
+    src: "https://github.com/dunglas/mercure/releases/download/v{{ mercure_rocks_release }}/mercure_{{ mercure_rocks_release }}_{{ ansible_system }}_{{ ansible_architecture }}.tar.gz"
+    dest: /opt/mercure
+    owner: "{{ mercure_rocks_user }}"
+    group: "{{ mercure_rocks_user }}"
+    remote_src: yes
+  when: mercure_rocks_installed_version is not defined or not mercure_rocks_installed.stat.exists or mercure_rocks_release not in mercure_rocks_installed_version.stdout
+  notify: mercure-restart
+  become: yes
+
+- name: Create a symbolic link to /usr/bin/mercure
+  file:
+    src: /opt/mercure/mercure
+    dest: /usr/bin/mercure
+    owner: "{{ mercure_rocks_user }}"
+    group: "{{ mercure_rocks_user }}"
+    state: link
+  when: not mercure_rocks_installed.stat.exists
+  notify: mercure-restart
+  become: yes
+
+# copy mercure config file
+- name: Create configuration directory
+  file:
+    path: /etc/mercure
+    state: directory
+    mode: 0755
+  when: not mercure_rocks_installed.stat.exists
+  become: yes
+
+- name: Install mercure configuration file
+  template:
+    src: mercure.yaml.j2
+    dest: /etc/mercure/mercure.yaml
+    owner: "{{ mercure_rocks_user }}"
+    group: "{{ mercure_rocks_user }}"
+    mode: 0755
+  notify: mercure-restart
+  become: yes
+
+- name: Install mercure installed version file
+  template:
+    src: installed_version.j2
+    dest: /etc/mercure/.installed_version
+    owner: "{{ mercure_rocks_user }}"
+    group: "{{ mercure_rocks_user }}"
+    mode: 0755
+  when: mercure_rocks_installed_version is not defined or not mercure_rocks_installed.stat.exists or mercure_rocks_release not in mercure_rocks_installed_version.stdout
+  become: yes
+
+# systemd setup
+- include_tasks: systemd.yml
+  when:
+    - ansible_service_mgr == "systemd"

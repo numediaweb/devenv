@@ -38,6 +38,7 @@ Installed dependencies can be found in [config.yml -> roles](config.yml).
     * [SSH tunnel](#ssh-tunnel)
     * [vagrant-fsnotify](#vagrant-fsnotify)
     * [SFTP server](#sftp-server)
+    * [Mercure](#mercure)
     * [ZSH shell](#zsh-shell)
   * [Known issues](#known-issues)
   * [Troubleshooting Vagrant/Ansible errors](#troubleshooting-vagrantansible-errors)
@@ -380,6 +381,18 @@ Use this settings to login to the devenv sftp server:
 * host: `192.168.33.12` (VM IP address)
 * port: `22`
 * key file for user is [ansible/roles/sftp/files/sftp_foo](ansible/roles/sftp/files/sftp_foo)
+
+### Mercure
+
+Test if Mercure is running `curl 127.0.0.1:3000` You should get as a response:
+```html
+<!DOCTYPE html>
+<title>Mercure Hub</title>
+<h1>Welcome to <a href="https://mercure.rocks">Mercure</a>!</h1>
+```
+If not then check if Mercure is running: `systemctl status mercure.rocks.service`
+
+Start it with: `sudo systemctl start mercure.rocks`
 
 ### ZSH shell
 
