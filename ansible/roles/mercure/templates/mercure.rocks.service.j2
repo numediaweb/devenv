@@ -13,5 +13,8 @@ UMask=007
 ExecStart=/usr/bin/mercure
 Restart=on-failure
 
+StandardOutput=file:/var/log/mercure.log
+StandardError=file:/var/log/mercure.log
+
 [Install]
 WantedBy=multi-user.target

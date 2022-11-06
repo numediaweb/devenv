@@ -384,7 +384,7 @@ Use this settings to login to the devenv sftp server:
 
 ### Mercure
 
-Test if Mercure is running `curl 127.0.0.1:3000` You should get as a response:
+Test if Mercure is running `curl 127.0.0.1:3000` You should get a response like:
 ```html
 <!DOCTYPE html>
 <title>Mercure Hub</title>
@@ -393,6 +393,8 @@ Test if Mercure is running `curl 127.0.0.1:3000` You should get as a response:
 If not then check if Mercure is running: `systemctl status mercure.rocks.service`
 
 Start it with: `sudo systemctl start mercure.rocks`
+
+See logs: `sudo tail -f -n 10 /var/log/mercure.log`
 
 ### ZSH shell
 

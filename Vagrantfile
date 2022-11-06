@@ -29,8 +29,16 @@ Vagrant.configure("2") do |config|
     config.disksize.size = parameters['vm_disksize']
 	config.vm.box_url = "http://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64-vagrant.box"
 	config.vm.network :private_network, ip: parameters['vm_ip']
+
+	# Apache port
     config.vm.network "forwarded_port", guest: 80, host: 8080
+
+	# Mercure port
+    config.vm.network "forwarded_port", guest: 300, host: 3000
+
+	# Redis port
     config.vm.network "forwarded_port", guest: 6379, host: 6379, host_ip: "127.0.0.1"
+
 	config.vm.hostname = "devenv"
 
 	# Shared folders
