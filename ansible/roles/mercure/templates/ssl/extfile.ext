@@ -6,5 +6,9 @@ subjectAltName = @alt_names
 [alt_names]
 DNS.1 = mercure.dev
 DNS.2 = www.mercure.dev
+DNS.3 = localhost
+DNS.4 = www.localhost
+DNS.5 = 127.0.0.1
+DNS.6 = www.127.0.0.1
 
 IP.1 = {{ params['vm_ip'] }}
