@@ -96,6 +96,9 @@
   when: mercure_rocks_installed_version is not defined or not mercure_rocks_installed.stat.exists or mercure_rocks_release not in mercure_rocks_installed_version.stdout
   become: yes
 
+# SSL
+- include: ssl.yml
+
 # systemd setup
 - include_tasks: systemd.yml
   when:

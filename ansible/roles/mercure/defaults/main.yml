@@ -11,5 +11,6 @@ mercure_rocks_transport_url: "null://"
 mercure_rocks_jwt_key: "{{ params['mercure'].mercure_rocks_jwt_key }}"
 mercure_rocks_jwt_algorithm: "HS256"
 mercure_rocks_release: "{{ params['mercure'].mercure_rocks_release }}"
-
 mercure_rocks_allow_anonymous: "true"
+mercure_rocks_cert_file: "/etc/mercure/mercure.dev.crt"
+mercure_rocks_key_file: "/etc/mercure/mercure.dev.key"

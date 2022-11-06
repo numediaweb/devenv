@@ -1,0 +1,34 @@
+- name: Creating private key for Mercure
+  shell: openssl genrsa -out {{ mercure_rocks_key_file }} 2048
+  become: yes
+  args:
+    executable: "/bin/bash"
+
+- name: Creating CSR for Mercure
+  shell: openssl req -new -key {{ mercure_rocks_key_file }} -nodes -out /etc/mercure/mercure.dev.csr -subj "/C={{params['ssl'].country_name}}/ST={{params['ssl'].state}}/L={{params['ssl'].locality}}/O={{params['ssl'].organization}}/CN=mercure.dev"
+  become: yes
+  args:
+    executable: "/bin/bash"
+
+- name: Generate the Subject Alternative Name (SAN) extension for Mercure
+  template:
+    src: ssl/extfile.ext
+    dest: "/etc/mercure/mercure.dev.ext"
+  become: yes
+
+- name: Create the certificate for Mercure
+  shell: openssl x509 -req -in /etc/mercure/mercure.dev.csr -CA {{params['ssl'].folder}}/root_certificate_authority.pem -CAkey {{params['ssl'].folder}}/ca_key.key -passin pass:{{params['ssl'].pass_phrase}} -CAcreateserial -out {{ mercure_rocks_cert_file }} -days 824 -sha256 -extfile /etc/mercure/mercure.dev.ext
+  become: yes
+  args:
+    executable: "/bin/bash"
+
+- name: Set permissions for Mercur TLS certificates
+  file:
+    path: "{{ item }}"
+    owner: "{{ mercure_rocks_user }}"
+    group: "{{ mercure_rocks_user }}"
+    mode: '0600'
+  with_items:
+    - "{{ mercure_rocks_cert_file }}"
+    - "{{ mercure_rocks_key_file }}"
+  become: yes
