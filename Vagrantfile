@@ -34,7 +34,7 @@ Vagrant.configure("2") do |config|
     config.vm.network "forwarded_port", guest: 80, host: 8080
 
 	# Mercure port
-    config.vm.network "forwarded_port", guest: 300, host: 3000
+    config.vm.network "forwarded_port", guest: 3000, host: 3000
 
 	# Redis port
     config.vm.network "forwarded_port", guest: 6379, host: 6379, host_ip: "127.0.0.1"

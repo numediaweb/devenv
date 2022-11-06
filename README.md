@@ -26,6 +26,7 @@ Installed dependencies can be found in [config.yml -> roles](config.yml).
   * [Ruby via rbenv](#ruby-via-rbenv)
   * [Vagrant share](#vagrant-share)
   * [RabbitMQ](#rabbitmq)
+  * [Mercure](#mercure)
   * [Utilities](#utilities)
     * [Mailcatcher](#mailcatcher)
       * [Use in Laravel](#use-in-laravel)
@@ -38,7 +39,6 @@ Installed dependencies can be found in [config.yml -> roles](config.yml).
     * [SSH tunnel](#ssh-tunnel)
     * [vagrant-fsnotify](#vagrant-fsnotify)
     * [SFTP server](#sftp-server)
-    * [Mercure](#mercure)
     * [ZSH shell](#zsh-shell)
   * [Known issues](#known-issues)
   * [Troubleshooting Vagrant/Ansible errors](#troubleshooting-vagrantansible-errors)
@@ -258,6 +258,20 @@ A configuration file defines component settings for permissions, limits and clus
 Restart it with: `service rabbitmq-server restart`
 Check status with: `rabbitmqctl status`
 
+### Mercure
+
+Test if Mercure is running `curl 127.0.0.1:3000` You should get a response like:
+```html
+<!DOCTYPE html>
+<title>Mercure Hub</title>
+<h1>Welcome to <a href="https://mercure.rocks">Mercure</a>!</h1>
+```
+If not then check if Mercure is running: `systemctl status mercure.rocks.service`
+
+Start it with: `sudo systemctl start mercure.rocks`
+
+See logs: `sudo tail -f -n 10 /var/log/mercure.log`
+
 ## Utilities
 
 ### Mailcatcher
@@ -381,20 +395,6 @@ Use this settings to login to the devenv sftp server:
 * host: `192.168.33.12` (VM IP address)
 * port: `22`
 * key file for user is [ansible/roles/sftp/files/sftp_foo](ansible/roles/sftp/files/sftp_foo)
-
-### Mercure
-
-Test if Mercure is running `curl 127.0.0.1:3000` You should get a response like:
-```html
-<!DOCTYPE html>
-<title>Mercure Hub</title>
-<h1>Welcome to <a href="https://mercure.rocks">Mercure</a>!</h1>
-```
-If not then check if Mercure is running: `systemctl status mercure.rocks.service`
-
-Start it with: `sudo systemctl start mercure.rocks`
-
-See logs: `sudo tail -f -n 10 /var/log/mercure.log`
 
 ### ZSH shell
 
