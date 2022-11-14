@@ -40,7 +40,6 @@ Installed dependencies can be found in [config.yml -> roles](config.yml).
     * [vagrant-fsnotify](#vagrant-fsnotify)
     * [SFTP server](#sftp-server)
     * [ZSH shell](#zsh-shell)
-  * [Known issues](#known-issues)
   * [Troubleshooting Vagrant/Ansible errors](#troubleshooting-vagrantansible-errors)
 
 ## Installation
@@ -401,6 +400,9 @@ Use this settings to login to the devenv sftp server:
 ZSH is a terminal that can pratically predict what you want to type, save a lot of repetitive commands, give you a really powerful autocomplete. Based on [ansible-role-zsh](https://github.com/viasite-ansible/ansible-role-zsh)
 
 ## Troubleshooting Vagrant/Ansible errors
+
+Failed to open/create the internal network Vagrant on Windows10
+
 
 ### ERROR: Module mpm_event is enabled - cannot proceed due to conflicts
 
