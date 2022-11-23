@@ -1,0 +1,18 @@
+# {{ ansible_managed }}
+[Unit]
+Description=Headless Chrome is a way to run the Chrome browser in a headless environment.
+After=network-online.target
+
+[Service]
+Type=simple
+
+UMask=007
+
+ExecStart=/usr/bin/chrome --headless --disable-gpu --no-sandbox --remote-debugging-port={{ chrome_port }}
+Restart=on-failure
+
+StandardOutput=file:/var/log/chrome.log
+StandardError=file:/var/log/chrome.log
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,12 @@
+---
+- name: reload-systemd
+  systemd:
+    daemon_reload: yes
+  become: yes
+
+- name: restart-chrome
+  service:
+    name: chrome.service
+    state: restarted
+  when: service_default_state | default('started') == 'started'
+  become: yes

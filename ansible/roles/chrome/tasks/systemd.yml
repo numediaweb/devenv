@@ -1,0 +1,19 @@
+---
+- name: Install systemd service
+  template:
+    src: chrome.service.j2
+    dest: "/lib/systemd/system/chrome.service"
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - reload-systemd
+  become: yes
+
+- name: Enable service Chrome and ensure it is not masked
+  systemd:
+    name: chrome.service
+    enabled: yes
+    masked: no
+  notify: restart-chrome
+  become: yes

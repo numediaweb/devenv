@@ -1,0 +1,43 @@
+---
+- name: create "{{ chrome_user }}" group
+  group:
+    name: "{{ chrome_user }}"
+    state: present
+  become: yes
+
+- name: create "{{ chrome_user }}" user
+  user:
+    name: "{{ chrome_user }}"
+    group: "{{ chrome_user }}"
+    state: present
+  become: yes
+
+- name: get google key
+  apt_key:
+    url: "https://dl-ssl.google.com/linux/linux_signing_key.pub"
+    state: present
+  become: yes
+
+- name: add gogle repository
+  command: sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+  become: yes
+
+- name: update apt
+  apt: update_cache=yes
+  become: yes
+
+- name: install google-chrome
+  apt: pkg=google-chrome-stable state=latest
+  become: yes
+
+- name: Set Chrome path
+  alternatives:
+    name: chrome
+    path: /usr/bin/google-chrome-stable
+    link: /usr/bin/chrome
+  become: yes
+
+# systemd setup
+- include_tasks: systemd.yml
+  when:
+    - ansible_service_mgr == "systemd"
