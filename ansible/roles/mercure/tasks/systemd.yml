@@ -10,7 +10,7 @@
     - reload-systemd
   become: yes
 
-- name: enable service mercure and ensure it is not masked
+- name: Enable service mercure and ensure it is not masked
   systemd:
     name: mercure.rocks
     enabled: yes
