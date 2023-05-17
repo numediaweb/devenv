@@ -9,6 +9,7 @@
     - mysql-client-core-5.7
     - mysql-client-5.7
     - libmysqlclient-dev
+    - unixodbc-dev
 
 # 'localhost' needs to be the last item for idempotency, see
 # http://ansible.cc/docs/modules.html#mysql-user
@@ -26,4 +27,18 @@
 
 - name: MySQL => Copy .my.cnf file with root password credentials
   template: src=my.cnf.j2 dest=/root/.my.cnf owner=root mode=0600
+  become: yes
+
+- name: Microsoft ODBC driver 18 => Copy bash file to ~/bin
+  copy: src=templates/odbc.sh dest=~/bin/ mode=755
+
+- name: Changing perm of "~/bin/odbc.sh", adding "+x"
+  file:
+    dest: ~/bin/odbc.sh
+    mode: a+x
+
+- name: Run Microsoft ODBC driver 18 install
+  script: ~/bin/odbc.sh
+  args:
+    executable: bash
   become: yes
