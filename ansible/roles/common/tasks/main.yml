@@ -66,7 +66,7 @@
   file: path=~/bin state=directory
 
 - name: Copy common files to ~/bin
-  copy: src={{ item }} dest=~/bin/  mode=755
+  copy: src={{ item }} dest=~/bin/ mode=755
   with_fileglob:
     - bin/*
 

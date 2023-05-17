@@ -13,7 +13,7 @@ Installed dependencies can be found in [config.yml -> roles](config.yml).
         * [Available options and parameters for hosts](#available-options-and-parameters-for-hosts)
         * [Additional parameters](#additional-parameters)
     * [Add hosts to local system's hosts file](#add-hosts-to-local-systems-hosts-file)
-    * [Install additional modules](#install-additional-modules)
+  * [PHP Extensions](#php-extensions)
   * [SSL/TLS](#ssltls)
     * [Install for Google Chrome on MAC](#install-for-google-chrome-on-mac)
     * [Install for Google Chrome on Windows](#install-for-google-chrome-on-windows)
@@ -118,6 +118,19 @@ The IP corresponds to the `vm_ip` inside the config.
  
 Notes about the `ERR_ICANN_NAME_COLLISION` bug on Windows; if you see this error on your Chrome browser, try to edit the hosts file and put the problematic address on a new line!
 
+## PHP Extensions
+
+needs doc...
+
+Install the PHP drivers for Microsoft SQL Server (Ubuntu with PHP-FPM)
+
+```shell
+udo pecl -d php_suffix=7.4 install sqlsrv-5.10.1
+printf "; priority=20\nextension=sqlsrv.so\n" > /etc/php/7.4/mods-available/sqlsrv.ini
+printf "; priority=30\nextension=pdo_sqlsrv.so\n" > /etc/php/74/mods-available/pdo_sqlsrv.ini
+exit
+sudo phpenmod -v 8.4 sqlsrv pdo_sqlsrv
+```
 ## SSL/TLS
 
 1. In your custom config file change the default password:
@@ -137,6 +150,7 @@ openssl genrsa -aes256 -out ca_key.key 4096
 ```shell
 openssl req -config openssl-ca.cnf \
    -new -x509 -nodes \
+   -days 365 \
    -key ca_key.key \
    -out root_certificate_authority.pem
 ```

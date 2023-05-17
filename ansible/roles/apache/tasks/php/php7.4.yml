@@ -17,6 +17,7 @@
       - php7.4-ldap
       - php7.4-mysql
       - php7.4-mbstring
+      - php7.4-pcov
       - php7.4-redis
       - php7.4-simplexml
       - php7.4-sqlite3
@@ -26,17 +27,3 @@
       - php7.4-zip
     state: present
   become: yes
-
-#- name: Copy pre-compiled 8.0 Pecl extensions
-#  copy: src={{ item }} dest=/usr/lib/php/20200930  mode=755
-#  with_fileglob:
-#    - 20200930/*
-#  become: yes
-#
-#- name: Add mcrypt extension
-#  template: src=mcrypt.ini.j2 dest=/etc/php/7.4/{{ item.sapi }}/20-mcrypt.ini
-#  with_items:
-#    - { sapi: 'cli/conf.d' }
-#    - { sapi: 'apache2/conf.d' }
-#    - { sapi: 'mods-available' }
-#  become: yes
