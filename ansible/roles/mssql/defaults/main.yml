@@ -1,0 +1,19 @@
+---
+
+# Must be evaluation, Developer, Express, Web, Standard, Enterprise, or your 25 digit product key
+mssql_pid: Developer
+mssql_edition: Developer
+
+mssql_memory_memorylimitmb: "{{ (ansible_memtotal_mb * 0.5) | round | int }}"
+
+mssql_network_ipaddress: 127.0.0.1
+
+
+mssql_sa_password: "{{ params['mssql'].password }}"
+
+mssql_use_distribution: ubuntu
+mssql_use_dist_version: 18.04
+mssql_version: 2017
+mssql_use_dist_name: bionic
+
+__mssql_conf_path: /var/opt/mssql/mssql.conf

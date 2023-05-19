@@ -24,6 +24,7 @@
     - { role: zsh, when: "'zsh' in roles_enabled" }
     - { role: apache, when: "'apache' in roles_enabled" }
     - { role: mysql, when: "'mysql' in roles_enabled" }
+    - { role: mssql, when: "'mssql' in roles_enabled" }
     - { role: composer, when: "'composer' in roles_enabled" }
     - { role: rbenv, when: "'rbenv' in roles_enabled" }
     - { role: rails, when: "'rails' in roles_enabled" }

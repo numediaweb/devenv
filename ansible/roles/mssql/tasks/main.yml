@@ -1,0 +1,23 @@
+---
+
+- import_tasks: install.yml
+
+- import_tasks: setup.yml
+
+- name: check if ufw is installed
+  command: dpkg -L ufw
+  ignore_errors: yes
+  changed_when: no
+  register: check_ufw
+
+- import_tasks: ufw.yml
+  when: check_ufw is success
+
+- name: check if fail2ban is installed
+  command: dpkg -L fail2ban
+  ignore_errors: yes
+  changed_when: no
+  register: check_fail2ban
+
+- import_tasks: fail2ban.yml
+  when: check_fail2ban is success

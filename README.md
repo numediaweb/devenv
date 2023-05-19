@@ -21,6 +21,7 @@ Installed dependencies can be found in [config.yml -> roles](config.yml).
   * [Switching between PHP versions](#switching-between-php-versions)
   * [Debugging with PHPStorm: Xdebug](#debugging-with-phpstorm-xdebug)
     * [Xdebug on the CLI](#xdebug-on-the-cli)
+  * [Microsoft SQL Server](#microsoft-sql-server)
   * [Redis](#redis)
   * [Varnish](#varnish)
   * [Ruby via rbenv](#ruby-via-rbenv)
@@ -215,6 +216,29 @@ Running `c rabbitmq:consumer -m 100 work_queue_consume` doesn't triger xdebug in
 This DevEnv contains a utility script that allows switching between different available PHP versions. To switch to PHP 8.0 do:
 ```shell
 phpswitch 8.0
+```
+
+## Microsoft SQL Server
+
+Connect with the server using:
+
+```
+sudo sqlcmd -S 127.0.0.1 -U sa -P 'testPASSWORD1'
+CREATE DATABASE DIGITIM;
+GO
+
+CREATE LOGIN DIGITIM WITH PASSWORD = 'DIGItim1234'
+GO
+
+Use DIGITIM;
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.database_principals WHERE name = N'DIGITIM')
+BEGIN
+    CREATE USER [DIGITIM] FOR LOGIN [DIGITIM]
+    EXEC sp_addrolemember N'db_owner', N'DIGITIM'
+END;
+GO
 ```
 
 ## Redis

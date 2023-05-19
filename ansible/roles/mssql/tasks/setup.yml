@@ -1,0 +1,63 @@
+---
+
+- name: check if setup is needed
+  command: grep -Fq accepteula /var/opt/mssql/mssql.conf
+  ignore_errors: yes
+  changed_when: no
+  register: check_setup
+  become: yes
+
+- name: Gather system services facts
+  service_facts:
+  no_log: true
+
+- name: Set the __mssql_is_setup variable
+  set_fact:
+    __mssql_is_setup: >-
+      {{ ('running' in
+      ansible_facts['services']['mssql-server.service']['state']) or
+      ('enabled' in
+      ansible_facts['services']['mssql-server.service']['status']) }}
+
+
+- name: Set up MSSQL
+  when: not __mssql_is_setup
+  block:
+    # Setting MSSQL_SA_PASSWORD inline for security because setting it with
+    # environment: reveals the value when running playbooks with high verbosity
+    - name: Set up MSSQL
+      become: yes
+      shell: >-
+        MSSQL_SA_PASSWORD={{ mssql_sa_password | quote }}
+        /opt/mssql/bin/mssql-conf setup
+      environment:
+        ACCEPT_EULA: "Y"
+        MSSQL_PID: "{{ mssql_pid }}"
+      when: not __mssql_is_setup
+      register: __mssql_conf_setup
+      no_log: true
+      changed_when: true
+  rescue:
+    - name: Print output of failed task
+      fail:
+        msg: "{{ ansible_failed_result.stderr_lines }}"
+
+#- name: Set up MSSQL  2
+#  shell: >-
+#    MSSQL_SA_PASSWORD={{ mssql_sa_password | quote }}
+#    /opt/mssql/bin/mssql-conf setup
+#  environment:
+#    ACCEPT_EULA: "Y"
+#    MSSQL_PID: "{{ mssql_pid }}"
+#  no_log: true
+#  notify: restart_mssql
+#  when: check_setup is failed
+
+# for now these will not restart the server but has to be done manually as we can not check for changes
+- name: set memory.memorylimitmb
+  command: /opt/mssql/bin/mssql-conf set {{ item }}
+  with_items:
+    - network.ipaddress {{ mssql_network_ipaddress }}
+    - memory.memorylimitmb {{ mssql_memory_memorylimitmb }}
+    - telemetry.customerfeedback false
+  become: yes

@@ -1,0 +1,56 @@
+---
+
+- name: install prerequisites
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - gpg
+    state: present
+    update_cache: yes
+    cache_valid_time: 3600
+  become: yes
+
+- name: add apt-key
+  apt_key:
+    url: https://packages.microsoft.com/keys/microsoft.asc
+    state: present
+  become: yes
+
+# https://packages.microsoft.com/config/ubuntu/18.04/mssql-server-2017.list
+- name: add repository
+  apt_repository:
+    repo: "{{ item }}"
+    state: present
+  with_items:
+    - deb [arch=amd64] https://packages.microsoft.com/{{ mssql_use_distribution }}/{{ mssql_use_dist_version }}/mssql-server-{{ mssql_version }} {{ mssql_use_dist_name }} main
+    - deb [arch=amd64] https://packages.microsoft.com/{{ mssql_use_distribution }}/{{ mssql_use_dist_version }}/prod {{ mssql_use_dist_name }} main
+  become: yes
+
+- name: Check glibc version for Debian based servers
+  shell: dpkg -s libc-bin | awk '/Version/ {print $2}'
+  register: version_deb
+  when: ansible_os_family == "Debian"
+
+- name: install mssql
+  apt:
+    name:
+      - mssql-server
+      - mssql-tools
+      - unixodbc-dev
+    state: present
+  environment:
+    ACCEPT_EULA: Y
+  become: yes
+
+- name: add to bin-path
+  file:
+    src: /opt/mssql-tools/bin/{{ item }}
+    dest: /usr/local/bin/{{ item }}
+    owner: root
+    group: root
+    state: link
+  with_items:
+    - sqlcmd
+    - bcp
+  become: yes
